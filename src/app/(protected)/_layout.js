@@ -1,24 +1,53 @@
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Drawer } from 'expo-router/drawer';
-import { View, TouchableOpacity, StyleSheet, Text, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useAuth } from '../../hooks/Auth/index';
-import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import { Ionicons } from "@expo/vector-icons";
+import {
+  DrawerContentScrollView,
+  DrawerItemList,
+} from "@react-navigation/drawer";
+import { Drawer } from "expo-router/drawer";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useAuth } from "../../hooks/Auth/index";
 
 function CustomDrawerContent(props) {
   const { user, signOut } = useAuth();
+
+  const handleLogOut = async () => {
+    await signOut();
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View>
-        <Image source={require("../../assets/images/giacomelli.jpg")} style={{ width: 120, height: 120, alignSelf: "center", marginTop: 100, borderRadius:60 }} />
+        <Image
+          source={require("../../assets/images/giacomelli.jpg")}
+          style={{
+            width: 120,
+            height: 120,
+            alignSelf: "center",
+            marginTop: 100,
+            borderRadius: 60,
+          }}
+        />
       </View>
       <View>
-        <Text style={{ fontSize: 20, textAlign: "center", fontFamily: "bold" }}>{user?.user?.username || "Faça login"}</Text>
+        <Text style={{ fontSize: 20, textAlign: "center", fontFamily: "bold" }}>
+          {user?.user?.username || "Faça login"}
+        </Text>
       </View>
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-      <TouchableOpacity onPress={() => signOut()} style={{ justifyContent: "center", alignItems: "center", height: 50, backgroundColor: "#007bff", margin: 10, borderRadius: 10 }}>
+      <TouchableOpacity
+        onPress={handleLogOut}
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          height: 50,
+          backgroundColor: "#007bff",
+          margin: 10,
+          borderRadius: 10,
+        }}
+      >
         <Text style={{ color: "#fff", fontFamily: "regular" }}>LogOut</Text>
       </TouchableOpacity>
     </View>
@@ -38,23 +67,23 @@ const DrawerLayout = () => {
             drawerActiveBackgroundColor: "#ffa500",
             drawerActiveTintColor: "#fff",
             drawerLabelStyle: {
-              fontFamily: "bold"
-            }
-
+              fontFamily: "bold",
+            },
           }}
         />
         <Drawer.Screen
           name="addDupla"
           options={{
             drawerLabel: "Adicionar Duplas",
-            drawerIcon: () => <Ionicons name="add-circle" size={35} color="#000" />,
+            drawerIcon: () => (
+              <Ionicons name="add-circle" size={35} color="#000" />
+            ),
             headerShown: false,
             drawerActiveBackgroundColor: "#ffa500",
             drawerActiveTintColor: "#fff",
             drawerLabelStyle: {
-              fontFamily: "bold"
-            }
-
+              fontFamily: "bold",
+            },
           }}
         />
         <Drawer.Screen
@@ -66,9 +95,8 @@ const DrawerLayout = () => {
             drawerActiveBackgroundColor: "#ffa500",
             drawerActiveTintColor: "#fff",
             drawerLabelStyle: {
-              fontFamily: "bold"
-            }
-
+              fontFamily: "bold",
+            },
           }}
         />
         <Drawer.Screen
@@ -81,8 +109,8 @@ const DrawerLayout = () => {
             drawerActiveTintColor: "#fff",
             drawerActiveBackgroundColor: "#ffa500",
             drawerLabelStyle: {
-              fontFamily: "bold"
-            }
+              fontFamily: "bold",
+            },
           }}
         />
       </Drawer>

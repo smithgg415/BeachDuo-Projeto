@@ -18,8 +18,8 @@ export async function initializeDatabase(database) {
           CREATE TABLE IF NOT EXISTS duplas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             jogadorOne TEXT NOT NULL,
-            jogadorTwo TEXT,
-            torneio TEXT,
+            jogadorTwo TEXT NOT NULL,
+            torneio TEXT NOT NULL,
             created_at DATE DEFAULT CURRENT_TIMESTAMP,
             updated_at DATE
             );

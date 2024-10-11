@@ -14,7 +14,7 @@ export default function About() {
             <Text style={styles.description}>
                 O objetivo é proporcionar uma forma simples e eficiente para a administração de torneios, garantindo que todas as partidas sejam bem organizadas e que os resultados sejam facilmente acessíveis.
             </Text>
-            <Button title='Voltar' onPress={() => router.replace('/')} color="#ffa500" />
+            <Button title='Voltar' onPress={() => router.push('/')} color="#ffa500" />
         </ScrollView>
     );
 }

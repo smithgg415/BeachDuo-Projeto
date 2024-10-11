@@ -1,7 +1,8 @@
 import { useSQLiteContext } from "expo-sqlite";
 export function useDuplasDatabase(){
     const database = useSQLiteContext();
-    async function createDupla(jogadorOne, jogadorTwo, torneio ) {
+    async function createDupla({jogadorOne, jogadorTwo, torneio }) {
+        // console.log("createDupla: ", {jogadorOne, jogadorTwo, torneio})
         const statment = await database.prepareAsync(`
             INSERT INTO duplas (jogadorOne, jogadorTwo, torneio) VALUES ($jogadorOne, $jogadorTwo, $torneio);
             `);
