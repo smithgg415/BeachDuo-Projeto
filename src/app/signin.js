@@ -86,14 +86,15 @@ export default function App() {
         />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => router.push("about")}
+        onPress={() => router.push("/about")}
         style={styles.link}
       >
         <Text style={styles.linkText}>Sobre</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => BackHandler.exitApp()}
-        style={styles.link}>
+        style={styles.link}
+      >
         <Text style={styles.linkText}>Fechar APP</Text>
       </TouchableOpacity>
     </View>

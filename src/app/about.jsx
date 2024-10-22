@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Text, View, Button, StyleSheet, ScrollView } from 'react-native';
 import { router } from 'expo-router';
@@ -14,7 +15,7 @@ export default function About() {
             <Text style={styles.description}>
                 O objetivo é proporcionar uma forma simples e eficiente para a administração de torneios, garantindo que todas as partidas sejam bem organizadas e que os resultados sejam facilmente acessíveis.
             </Text>
-            <Button title='Voltar' onPress={() => router.push('/')} color="#ffa500" />
+            <Button title='Voltar' onPress={() => router.back('/')} color="#ffa500" />
         </ScrollView>
     );
 }

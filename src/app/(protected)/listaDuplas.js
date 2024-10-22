@@ -8,7 +8,7 @@ import TopBar from '../../components/TopBar';
 
 export default function List() {
     const comeBack = () => {
-        router.back('/');
+        router.back();
         setTorneioSelecionado('Todos');
     };
     const [torneios, setTorneios] = useState([
