@@ -1,10 +1,12 @@
 export async function initializeDatabase(database) {
     try {
         await database.execAsync(`
-        DROP TABLE IF EXISTS duplas;
+         /*DROP TABLE IF EXISTS duplas;
+            
+            
+            DROP TABLE IF EXISTS users;
 
-
-        DROP TABLE IF EXISTS users;
+            DROP INDEX IF EXISTS idx_users_nome;*/
         
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,9 +25,12 @@ export async function initializeDatabase(database) {
             created_at DATE DEFAULT CURRENT_TIMESTAMP,
             updated_at DATE
             );
-        INSERT OR REPLACE INTO users (username, senha, role) VALUES ('Giacomelli', '12345678', 'ADMIN');
+
+        CREATE INDEX IF NOT EXISTS idx_users_username ON users (username);
+        CREATE INDEX IF NOT EXISTS idx_duplas_torneio ON duplas (torneio);
+        /*INSERT OR REPLACE INTO users (username, senha, role) VALUES ('Giacomelli', '12345678', 'ADMIN');
         INSERT OR REPLACE INTO users (username, senha, role) VALUES ('user', '12345678', 'USER');
-        INSERT OR REPLACE INTO users (username, senha, role) VALUES ('super', '12345678', 'SUPER');
+        INSERT OR REPLACE INTO users (username, senha, role) VALUES ('super', '12345678', 'SUPER');*/
         `);
     }
     catch (error) {

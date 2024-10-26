@@ -22,7 +22,7 @@ export default function Perfil() {
 
             <View style={styles.profileSection}>
                 <Image source={avatar} style={styles.profileImage} />
-                <Text style={styles.userName}>{user.user?.username || "Fora de Login"}</Text>
+                <Text style={styles.userName}>{user?.user?.username || "Realize login para continuar"}</Text>
             </View>
             <View style={styles.actionsSection}>
                 <TouchableOpacity style={styles.actionButton} onPress={() => { signOut() }}>
