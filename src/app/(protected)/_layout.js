@@ -72,6 +72,21 @@ const DrawerLayout = () => {
           }}
         />
         <Drawer.Screen
+          name="addTorneio"
+          options={{
+            drawerLabel: "Criar torneio",
+            drawerIcon: () => (
+              <Ionicons name="trophy" size={35} color="#000" />
+            ),
+            headerShown: false,
+            drawerActiveBackgroundColor: "#ffa500",
+            drawerActiveTintColor: "#fff",
+            drawerLabelStyle: {
+              fontFamily: "bold",
+            },
+          }}
+        />
+        <Drawer.Screen
           name="addDupla"
           options={{
             drawerLabel: "Adicionar Duplas",

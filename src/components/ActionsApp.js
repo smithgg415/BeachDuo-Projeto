@@ -4,27 +4,35 @@ import { router } from "expo-router";
 export default function Actions() {
     return (
         <View style={styles.containerItems}>
-            <TouchableOpacity style={styles.btn} onPress={() => router.push('/addDupla')}>
-                <Ionicons name="add" size={50} color="white" />
-                <Text style={styles.btnName}>Adicionar Dupla</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={() => router.push("/listaDuplas")}>
-                <Ionicons name="people" size={50} color="white" />
-                <Text style={styles.btnName}>Lista de Duplas</Text>
-            </TouchableOpacity>
+            <ScrollView style={{flexDirection:"row"}} horizontal={true} showsHorizontalScrollIndicator={false}>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push('/addDupla')}>
+                    <Ionicons name="add" size={50} color="white" />
+                    <Text style={styles.btnName}>Adicionar Dupla</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push("/listaDuplas")}>
+                    <Ionicons name="people" size={50} color="white" />
+                    <Text style={styles.btnName}>Lista de Duplas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push("/addTorneio")}>
+                    <Ionicons name="add" size={50} color="white" />
+                    <Text style={styles.btnName}>Adicionar Torneio</Text>
+                </TouchableOpacity>
+            </ScrollView>
         </View>
     );
 }
 const styles = StyleSheet.create({
     containerItems: {
         flexDirection: "row",
-        justifyContent: "space-around",
         marginBottom: 20,
+        alignItems: "center",
+        justifyContent: "center",
         marginTop: 10,
     },
     btn: {
-        width: 160,
-        height: 115,
+        width: 200,
+        height: 105,
+        margin: 10,
         backgroundColor: "#ffa500",
         borderRadius: 15,
         justifyContent: "center",

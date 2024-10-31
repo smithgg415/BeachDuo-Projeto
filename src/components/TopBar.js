@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { useDrawerStatus } from '@react-navigation/drawer';
 import { useRouter } from "expo-router";
+import { Constants } from "expo-constants";
 
 export default function TopBar() {
     const navigation = useNavigation();

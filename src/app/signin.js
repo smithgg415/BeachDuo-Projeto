@@ -97,6 +97,9 @@ export default function App() {
       >
         <Text style={styles.linkText}>Fechar APP</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.linkText} onPress={()=> router.push("/maintenance")}>
+        <Text style={styles.linkText}>Banco de dados</Text>
+      </TouchableOpacity>
     </View>
   );
 }

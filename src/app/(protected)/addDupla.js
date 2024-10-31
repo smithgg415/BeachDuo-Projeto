@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Animated, Modal, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
-import { useState, useRef } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Animated, Modal, ScrollView, Platform } from 'react-native';
+import { useState, useRef, useEffect } from 'react';
 import { router } from 'expo-router';
 import TopBar from '../../components/TopBar';
 import Constants from 'expo-constants';
@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Picker } from '@react-native-picker/picker';
 import { z } from "zod";
 import { useDuplasDatabase } from "../../database/useDuplasDatabase";
-import { useUsersDatabase} from "../../database/useUsersDatabase";
+import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 
 
 export default function AddDupla() {
@@ -32,18 +32,20 @@ export default function AddDupla() {
             id: id,
             jogadorOne: nome01,
             jogadorTwo: nome02,
-            torneio: sugestoes.find((item) => item.id === id)?.nome
+            torneio: torneios.find((item) => item.id === selectedTorneio)?.nome,
+
         };
+        const updatedTorneios = await getAllTorneios(); // ou uma função que retorna a lista atualizada
+        setTorneios(updatedTorneios);
         try {
             const result = await duplaSchema.parseAsync(duplas);
             const { insertedID } = await createDupla(duplas);
             console.log(result);
-            console.log(insertedID)
-        }
-        catch (error) {
+            console.log(insertedID);
+        } catch (error) {
             console.error(error);
         }
-    }
+    };
     const showDuplaCheck = () => {
         if (!nome01 || !nome02) {
             setCampoVazio(true);
@@ -114,14 +116,29 @@ export default function AddDupla() {
         setNome01("");
         setNome02("");
     }
-    const [sugestoes, setSugestoes] = useState([
-        { id: 1, nome: "Clique na seta e selecione" },
-        { id: 2, nome: "5° Open da Sun7" },
-        { id: 3, nome: "3° Open A. Mauí" },
-        { id: 4, nome: "5° Cumbuca de Beach Piquerobi" },
-    ]);
 
     const [id, setId] = useState(1);
+
+    const { getAllTorneios } = useTorneioDatabase();
+    const [torneios, setTorneios] = useState([]);
+    const [selectedTorneio, setSelectedTorneio] = useState(null);
+    useEffect(() => {
+        const fetchTorneios = async () => {
+            try {
+                const allTorneios = await getAllTorneios();
+                setTorneios(allTorneios);
+            } catch (error) {
+                console.error("Erro ao buscar torneios: ", error);
+            }
+        };
+
+        fetchTorneios();
+    }, []);
+
+    const handleTorneioChange = (itemValue) => {
+        setSelectedTorneio(itemValue);
+        console.log("Torneio selecionado:", itemValue);
+    };
     return (
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
             <View style={styles.cont}>
@@ -170,21 +187,19 @@ export default function AddDupla() {
                                 <View style={styles.input}>
                                     <Picker
                                         style={{ width: '100%' }}
-                                        selectedValue={id}
-                                        onValueChange={(itemValue, index) => setId(itemValue)}
+                                        selectedValue={selectedTorneio}
+                                        onValueChange={handleTorneioChange}
                                         dropdownIconColor={"#333"}
                                     >
-                                        {sugestoes.map((item, index) => {
-                                            return (
-                                                <Picker.Item
-                                                    key={item.id}
-                                                    label={item.nome}
-                                                    value={item.id}
-                                                    enabled={item.id !== 1}
-                                                />
-                                            );
-                                        })}
+                                        {torneios.map((torneio) => (
+                                            <Picker.Item
+                                                key={torneio.id}
+                                                label={torneio.nome}
+                                                value={torneio.id}
+                                            />
+                                        ))}
                                     </Picker>
+
                                 </View>
                                 <View style={styles.duplaContainer}>
                                     <Text style={styles.conferir}>Confira os nomes</Text>
@@ -198,8 +213,11 @@ export default function AddDupla() {
                                         <Ionicons name="trophy" size={24} color="#333" style={{ marginTop: 12, marginLeft: 10 }} />
                                     </View>
                                     <Text style={styles.name}>
-                                        {id === 1 ? "Nenhum torneio selecionado" : sugestoes.find((item) => item.id === id)?.nome}
+                                        {selectedTorneio === null
+                                            ? "Nenhum torneio selecionado"
+                                            : torneios.find((item) => item.id === selectedTorneio)?.nome}
                                     </Text>
+
 
                                 </View>
                                 <View style={styles.contentButtons}>

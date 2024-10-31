@@ -1,47 +1,95 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { router } from "expo-router";
 import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Swipeable } from 'react-native-gesture-handler';
 import TopBar from '../../components/TopBar';
+import { useTorneioDatabase } from '../../database/useTorneioDatabase';
+import { useDuplasDatabase } from '../../database/useDuplasDatabase';
 
 export default function List() {
+    const { getAllTorneios } = useTorneioDatabase();
+    const { getAllDuplas, createDupla, deleteDupla } = useDuplasDatabase();
+    const [torneios, setTorneios] = useState([]);
+    const [duplas, setDuplas] = useState([]);
+    const [torneioSelecionado, setTorneioSelecionado] = useState('Todos');
+    const [updateList, setUpdateList] = useState(false);
+
     const comeBack = () => {
         router.back();
         setTorneioSelecionado('Todos');
     };
-    const [torneios, setTorneios] = useState([
-        'Todos',
-        '5° Open da Sun7',
-        '5° Cumbuca de Beach Piquerobi',
-        '3° Open A. Mauí'
-    ]);
-    const [torneioSelecionado, setTorneioSelecionado] = useState('Todos');
 
-    const [duplas, setDuplas] = useState([
-        { id: '1', dupla: 'João e Maria', torneio: '5° Open da Sun7' },
-        { id: '2', dupla: 'Pedro e Ana', torneio: '5° Cumbuca de Beach Piquerobi' },
-        { id: '3', dupla: 'Lucas e Carla', torneio: '3° Open A. Mauí' },
-        { id: '4', dupla: 'Roberto e Luiza', torneio: '5° Open da Sun7' },
-    ]);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const allTorneios = await getAllTorneios();
+                setTorneios(allTorneios);
+                
+                const allDuplas = await getAllDuplas();
+                setDuplas(allDuplas);
+            } catch (error) {
+                console.error("Erro ao buscar dados: ", error);
+            }
+        };
+
+        fetchData();
+    }, [updateList]);
 
     const filtrarDuplas = () => {
-        if (torneioSelecionado === 'Todos') {
-            return duplas;
-        }
-        return duplas.filter(dupla => dupla.torneio === torneioSelecionado);
+        return torneioSelecionado === 'Todos' 
+            ? duplas 
+            : duplas.filter(dupla => dupla.torneio === torneioSelecionado);
     };
 
-    const contarDuplas = () => {
-        const duplasFiltradas = filtrarDuplas();
-        return duplasFiltradas.length;
+    const contarDuplas = () => filtrarDuplas().length;
+
+    const renderItem = ({ item }) => {
+        const renderRightActions = () => (
+            <TouchableOpacity onPress={() => handleDeleteDupla(item.id)} style={styles.deleteButton}>
+                <Ionicons name="trash" size={24} color="#fff" />
+            </TouchableOpacity>
+        );
+
+        return (
+            <Swipeable renderRightActions={renderRightActions}>
+                <View style={styles.itemContainer}>
+                    <Text style={styles.itemText}>{`${item.jogadorOne} e ${item.jogadorTwo}`}</Text>
+                    <Text style={styles.tournamentText}>{item.torneio}</Text>
+                </View>
+            </Swipeable>
+        );
     };
-    const renderItem = ({ item }) => (
-        <View style={styles.itemContainer}>
-            <Text style={styles.itemText}>{item.dupla}</Text>
-            <Text style={styles.tournamentText}>{item.torneio}</Text>
-        </View>);
+
+    const handleAddDupla = async (novaDupla) => {
+        try {
+            await createDupla(novaDupla);
+            setUpdateList(prev => !prev);
+        } catch (error) {
+            console.error("Erro ao adicionar dupla: ", error);
+        }
+    };
+
+    const handleDeleteDupla = async (id) => {
+        Alert.alert(
+            "Excluir Dupla",
+            "Tem certeza que deseja excluir esta dupla?",
+            [
+                { text: "Cancelar", style: "cancel" },
+                { text: "Excluir", onPress: async () => {
+                    try {
+                        await deleteDupla(id);
+                        setUpdateList(prev => !prev);
+                    } catch (error) {
+                        console.error("Erro ao excluir dupla: ", error);
+                    }
+                }},
+            ]
+        );
+    };
+
     return (
         <>
             <View style={styles.top}>
@@ -50,9 +98,7 @@ export default function List() {
             <View style={styles.container}>
                 <View style={styles.topBar}>
                     <Ionicons name="filter" size={20} color="#fff" />
-                    <Text style={styles.topBarText}>
-                        Selecione o Torneio
-                    </Text>
+                    <Text style={styles.topBarText}>Selecione o Torneio</Text>
                     <View style={styles.pickerContainer}>
                         <Ionicons name="trophy" size={24} color="#fff" />
                         <Picker
@@ -60,10 +106,10 @@ export default function List() {
                             style={styles.picker}
                             onValueChange={(itemValue) => setTorneioSelecionado(itemValue)}
                             dropdownIconColor="#fff"
-
                         >
+                            <Picker.Item label="Todos" value="Todos" />
                             {torneios.map(torneio => (
-                                <Picker.Item key={torneio} label={torneio} value={torneio} />
+                                <Picker.Item key={torneio.id} label={torneio.nome} value={torneio.nome} />
                             ))}
                         </Picker>
                     </View>
@@ -73,7 +119,7 @@ export default function List() {
 
                 <FlatList
                     data={filtrarDuplas()}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => item.id.toString()}
                     renderItem={renderItem}
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
@@ -82,23 +128,15 @@ export default function List() {
                 <View style={styles.counterContainer}>
                     <Ionicons name="people" size={28} color="#ffa500" style={styles.contadorIcon} />
                     <View style={styles.contadorConteudo}>
-                        <Text style={styles.contadorTexto}>
-                            Duplas cadastradas em:
-                        </Text>
-                        <Text style={styles.torneioNome}>
-                            {torneioSelecionado}
-                        </Text>
-                        <Text style={styles.contador}>
-                            {contarDuplas()}
-                        </Text>
+                        <Text style={styles.contadorTexto}>Duplas cadastradas em:</Text>
+                        <Text style={styles.torneioNome}>{torneioSelecionado}</Text>
+                        <Text style={styles.contador}>{contarDuplas()}</Text>
                     </View>
                 </View>
 
                 <TouchableOpacity style={styles.backButton} onPress={comeBack}>
                     <Ionicons name="arrow-back" size={20} color="#fff" />
-                    <Text style={styles.backButtonText}>
-                        Voltar
-                    </Text>
+                    <Text style={styles.backButtonText}>Voltar</Text>
                 </TouchableOpacity>
             </View>
         </>
@@ -116,9 +154,6 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     topBar: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
         backgroundColor: '#ffa500',
         padding: 10,
         borderRadius: 8,
@@ -176,11 +211,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#888',
         marginTop: 5,
-        fontFamily: 'bolditalic',
+        fontFamily: 'italic',
+    },
+    deleteButton: {
+        backgroundColor: '#ff0000',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 60,
+        height: 60,
+        marginTop: 25,
+        borderRadius: 10,
+        marginLeft: 10,
     },
     counterContainer: {
         flexDirection: 'row',
-        display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#fff',
@@ -204,7 +248,7 @@ const styles = StyleSheet.create({
     },
     torneioNome: {
         fontSize: 16,
-        fontFamily: 'bolditalic',
+        fontFamily: 'italic',
         color: '#ffa500',
         marginTop: 5,
     },
@@ -216,7 +260,6 @@ const styles = StyleSheet.create({
     },
     backButton: {
         flexDirection: 'row',
-        display: 'flex',
         justifyContent: 'center',
         backgroundColor: '#ffa500',
         paddingVertical: 12,
@@ -225,7 +268,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         alignItems: 'center',
         elevation: 5,
-
     },
     backButtonText: {
         color: '#fff',
