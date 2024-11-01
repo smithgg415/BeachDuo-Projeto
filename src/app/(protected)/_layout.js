@@ -114,6 +114,20 @@ const DrawerLayout = () => {
             },
           }}
         />
+        
+        <Drawer.Screen
+          name="listaTorneios"
+          options={{
+            drawerLabel: "Torneios",
+            drawerIcon: () => <Ionicons name="list" size={35} color="#000" />,
+            headerShown: false,
+            drawerActiveBackgroundColor: "#ffa500",
+            drawerActiveTintColor: "#fff",
+            drawerLabelStyle: {
+              fontFamily: "bold",
+            },
+          }}
+        />
         <Drawer.Screen
           name="perfil"
           options={{

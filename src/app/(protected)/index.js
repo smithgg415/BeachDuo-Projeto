@@ -40,7 +40,7 @@ export default function Home() {
                     onPress: async () => {
                         try {
                             await deleteTorneio(id);
-                            fetchTorneios(); // Atualiza a lista de torneios
+                            fetchTorneios();
                         } catch (error) {
                             console.error("Erro ao excluir torneio: ", error);
                         }
@@ -62,19 +62,19 @@ export default function Home() {
                     <Text style={styles.sectionTitle}>Novidades</Text>
                     {torneios.length > 0 ? (
                         torneios.map(torneio => (
-                            <View key={torneio.id} style={styles.card}>
-                                {/* <Text style={styles.usernameText}>{user?.user?.username} publicou este torneio</Text> */}
-                                <Image source={{ uri: torneio.foto }} style={styles.cardImage} />
-                                <View style={styles.cardInfo}>
-                                    <Text style={styles.cardNome}>{torneio.nome}</Text>
-                                    <Text style={styles.cardText}>Data: {new Date(torneio.data_torneio).toLocaleDateString()}</Text>
-                                    <Text style={styles.cardText}>Local: {torneio.local}</Text>
+                                <View key={torneio.id} style={styles.card}>
+                                    {/* <Text style={styles.usernameText}>{user?.user?.username} publicou este torneio</Text> */}
+                                    <Image source={{ uri: torneio.foto }} style={styles.cardImage} />
+                                    <View style={styles.cardInfo}>
+                                        <Text style={styles.cardNome}>{torneio.nome}</Text>
+                                        <Text style={styles.cardText}>Data: {torneio.data_torneio}</Text>
+                                        <Text style={styles.cardText}>{torneio.local}</Text>
 
-                                    {/* <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(torneio.id)}>
+                                        {/* <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(torneio.id)}>
                                         <Text style={styles.deleteButtonText}>Excluir</Text>
                                     </TouchableOpacity> */}
+                                    </View>
                                 </View>
-                            </View>
                         ))
                     ) : (
                         <Text style={styles.noTorneiosText}>Nenhum torneio encontrado.</Text>
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
         fontFamily: 'bold',
     },
     cardText: {
-        textAlign: 'left',
+        textAlign: 'center',
         color: 'rgba(0, 0, 0, 0.5)',
         top: -10,
         fontSize: 16,
