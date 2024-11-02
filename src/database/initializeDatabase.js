@@ -1,7 +1,7 @@
 export async function initializeDatabase(database) {
     try {
         await database.execAsync(`
-           /* DROP TABLE IF EXISTS duplas;
+            /*DROP TABLE IF EXISTS duplas;
 
             DROP TABLE IF EXISTS users;
             
@@ -33,7 +33,7 @@ export async function initializeDatabase(database) {
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
                 local TEXT NOT NULL, 
-                data_torneio DATE NOT NULL,
+                data_torneio TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 foto TEXT NOT NULL,
                 descricao TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

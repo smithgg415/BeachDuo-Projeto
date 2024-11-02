@@ -6,6 +6,7 @@ import { useTorneioDatabase } from "../../database/useTorneioDatabase";
 import { router } from "expo-router";
 import Constants from 'expo-constants';
 import TopBar from "../../components/TopBar";
+import { Ionicons } from "@expo/vector-icons";
 
 function formatDate(date) {
     const year = date.getFullYear();
@@ -17,7 +18,7 @@ function formatDate(date) {
 export default function AddTorneio() {
     const torneioSchema = z.object({
         nome: z.string().nonempty("Nome é obrigatório"),
-        data_torneio: z.string(), // Use string para o formato ISO
+        data_torneio: z.string(),
         local: z.string().nonempty("Local é obrigatório"),
         foto: z.string().url("URL da foto inválida"),
         descricao: z.string().optional(),
@@ -61,14 +62,17 @@ export default function AddTorneio() {
         <View style={styles.container}>
             <TopBar />
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text style={styles.title}>Adicionar Torneio</Text>
+                <Text style={styles.title}>Crie um torneio</Text>
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Nome"
-                    onChangeText={setNome}
-                    value={nome}
-                />
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        placeholder="Nome"
+                        style={styles.inputWithIcon}
+                        onChangeText={setNome}
+                        value={nome}
+                    />
+                    <Ionicons name="trophy" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                </View>
 
                 <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
                     <Text style={styles.dateText}>Data do Torneio: {dataTorneio.toLocaleDateString()}</Text>
@@ -83,32 +87,44 @@ export default function AddTorneio() {
                     />
                 )}
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Local"
-                    onChangeText={setLocal}
-                    value={local}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Foto (URL)"
-                    onChangeText={setFoto}
-                    value={foto}
-                />
-                <TextInput
-                    style={styles.input}
-                    placeholder="Descrição (opcional)"
-                    onChangeText={setDescricao}
-                    value={descricao}
-                />
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.inputWithIcon}
+                        placeholder="Local"
+                        onChangeText={setLocal}
+                        value={local}
+                    />
+                    <Ionicons name="location" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.inputWithIcon}
+                        placeholder="Foto (URL)"
+                        onChangeText={setFoto}
+                        value={foto}
+                    />
+                    <Ionicons name="image" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.inputWithIcon}
+                        placeholder="Descrição (opcional)"
+                        onChangeText={setDescricao}
+                        value={descricao}
+                    />
+                    <Ionicons name="document-text" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Adicionar Torneio</Text>
+                    <Text style={styles.buttonText}>Criar Torneio</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -121,25 +137,37 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 26,
-        fontWeight: 'bold',
+        fontFamily: 'bold',
         marginBottom: 20,
         textAlign: 'center',
         color: '#ffa500',
     },
-    input: {
+    inputWithIcon: {
+        fontFamily: 'regular',
         height: 50,
-        width: '100%',
+        flex: 1,
         borderColor: '#ffa500',
         borderWidth: 2,
         borderRadius: 8,
         paddingHorizontal: 15,
+        paddingRight: 40, // Espaço para o ícone dentro do campo
         fontSize: 16,
-        marginBottom: 15,
         backgroundColor: '#fff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
+    },
+    inputContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 15,
+        position: 'relative',
+    },
+    iconInsideInput: {
+        position: 'absolute',
+        right: 15,
     },
     datePicker: {
         width: '100%',
@@ -152,7 +180,7 @@ const styles = StyleSheet.create({
     dateText: {
         color: '#fff',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontFamily: 'bold',
     },
     button: {
         width: '100%',
@@ -165,6 +193,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontSize: 18,
-        fontWeight: 'bold',
+        fontFamily: 'bold',
     },
 });

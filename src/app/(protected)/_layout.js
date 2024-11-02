@@ -7,6 +7,7 @@ import { Drawer } from "expo-router/drawer";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuth } from "../../hooks/Auth/index";
+import { AntDesign } from "@expo/vector-icons";
 
 function CustomDrawerContent(props) {
   const { user, signOut } = useAuth();
@@ -91,7 +92,7 @@ const DrawerLayout = () => {
           options={{
             drawerLabel: "Adicionar Duplas",
             drawerIcon: () => (
-              <Ionicons name="add-circle" size={35} color="#000" />
+              <AntDesign name="addusergroup" size={30} color="#000" />
             ),
             headerShown: false,
             drawerActiveBackgroundColor: "#ffa500",
@@ -105,7 +106,7 @@ const DrawerLayout = () => {
           name="listaDuplas"
           options={{
             drawerLabel: "Duplas",
-            drawerIcon: () => <Ionicons name="list" size={35} color="#000" />,
+            drawerIcon: () => <Ionicons name="people" size={35} color="#000" />,
             headerShown: false,
             drawerActiveBackgroundColor: "#ffa500",
             drawerActiveTintColor: "#fff",

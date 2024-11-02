@@ -30,7 +30,7 @@ export function useTorneioDatabase() {
     async function getAllTorneios() {
         try {
             const result = await database.getAllAsync(`
-                SELECT id, nome, local, foto, descricao FROM torneios
+                SELECT * FROM torneios
             `);
             return result;
         } catch (error) {

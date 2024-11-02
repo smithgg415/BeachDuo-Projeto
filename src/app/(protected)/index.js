@@ -8,6 +8,8 @@ import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { useAuth } from '../../hooks/Auth';
 import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
+import { ActivityIndicator } from 'react-native';
+
 export default function Home() {
     const { user } = useAuth();
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
@@ -25,6 +27,14 @@ export default function Home() {
     useEffect(() => {
         fetchTorneios();
     }, []);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // O mês é 0-indexado
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
 
     const handleDelete = async (id) => {
         Alert.alert(
@@ -49,6 +59,7 @@ export default function Home() {
             ]
         );
     };
+
     return (
         <View style={styles.container}>
             <StatusBar style="dark" />
@@ -62,22 +73,20 @@ export default function Home() {
                     <Text style={styles.sectionTitle}>Novidades</Text>
                     {torneios.length > 0 ? (
                         torneios.map(torneio => (
-                                <View key={torneio.id} style={styles.card}>
-                                    {/* <Text style={styles.usernameText}>{user?.user?.username} publicou este torneio</Text> */}
-                                    <Image source={{ uri: torneio.foto }} style={styles.cardImage} />
-                                    <View style={styles.cardInfo}>
-                                        <Text style={styles.cardNome}>{torneio.nome}</Text>
-                                        <Text style={styles.cardText}>Data: {torneio.data_torneio}</Text>
-                                        <Text style={styles.cardText}>{torneio.local}</Text>
-
-                                        {/* <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(torneio.id)}>
-                                        <Text style={styles.deleteButtonText}>Excluir</Text>
-                                    </TouchableOpacity> */}
-                                    </View>
+                            <View key={torneio.id} style={styles.card}>
+                                <Image source={{ uri: torneio.foto }} style={styles.cardImage} />
+                                <View style={styles.cardInfo}>
+                                    <Text style={styles.cardNome}>{torneio.nome}</Text>
+                                    <Text style={styles.cardText}>Data: {formatDate(torneio.data_torneio)}</Text>
+                                    <Text style={styles.cardText}>{torneio.local}</Text>
                                 </View>
+                            </View>
                         ))
                     ) : (
-                        <Text style={styles.noTorneiosText}>Nenhum torneio encontrado.</Text>
+                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                            <Text style={styles.noTorneiosText}>Nenhum torneio por aqui...</Text>
+                            <ActivityIndicator size="large" color="#ccc" />
+                        </View>
                     )}
                 </View>
             </ScrollView>
@@ -108,7 +117,7 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 24,
-        fontWeight: 'bold',
+        fontFamily: 'bold',
         marginBottom: 15,
         color: '#ffa500',
     },
@@ -151,28 +160,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontFamily: 'semibold',
     },
-    usernameText: {
-        textAlign: 'center',
-        color: '#fff',
-        fontSize: 14,
-        fontStyle: 'italic',
-        marginBottom: 5,
-    },
     noTorneiosText: {
         textAlign: 'center',
         color: '#666',
         fontSize: 16,
+        fontFamily: 'bold',
         marginTop: 20,
-    },
-    deleteButton: {
-        marginTop: 10,
-        padding: 10,
-        backgroundColor: '#ff0000',
-        borderRadius: 5,
-    },
-    deleteButtonText: {
-        color: '#fff',
-        textAlign: 'center',
-        fontWeight: 'bold',
     },
 });

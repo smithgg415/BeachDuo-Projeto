@@ -42,6 +42,7 @@ export default function List() {
         return torneioSelecionado === 'Todos' 
             ? duplas 
             : duplas.filter(dupla => dupla.torneio === torneioSelecionado);
+                
     };
 
     const contarDuplas = () => filtrarDuplas().length;
@@ -114,9 +115,9 @@ export default function List() {
                         </Picker>
                     </View>
                 </View>
-
+    
                 <Text style={styles.title}>Duplas de Beach Tennis</Text>
-
+    
                 <FlatList
                     data={filtrarDuplas()}
                     keyExtractor={item => item.id.toString()}
@@ -124,23 +125,27 @@ export default function List() {
                     contentContainerStyle={styles.listContent}
                     showsVerticalScrollIndicator={false}
                 />
-
+    
                 <View style={styles.counterContainer}>
                     <Ionicons name="people" size={28} color="#ffa500" style={styles.contadorIcon} />
                     <View style={styles.contadorConteudo}>
                         <Text style={styles.contadorTexto}>Duplas cadastradas em:</Text>
                         <Text style={styles.torneioNome}>{torneioSelecionado}</Text>
-                        <Text style={styles.contador}>{contarDuplas()}</Text>
+                        {contarDuplas() > 0 ? (
+                            <Text style={styles.contador}>{contarDuplas()}</Text>
+                        ) : (
+                            <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
+                        )}
                     </View>
                 </View>
-
+    
                 <TouchableOpacity style={styles.backButton} onPress={comeBack}>
                     <Ionicons name="arrow-back" size={20} color="#fff" />
                     <Text style={styles.backButtonText}>Voltar</Text>
                 </TouchableOpacity>
             </View>
         </>
-    );
+    );    
 }
 
 const styles = StyleSheet.create({
@@ -273,5 +278,11 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontFamily: 'bolditalic',
+    },
+    emptyMessage: {
+        fontFamily: 'italic',
+        fontSize: 16,
+        color: '#888',
+        textAlign: 'center',
     },
 });

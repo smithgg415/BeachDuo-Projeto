@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
         fontFamily: "bolditalic",
     },
     imagem: {
+        objectFit: 'cover',
         width: 350,
         height: 350,
         marginTop: 20,

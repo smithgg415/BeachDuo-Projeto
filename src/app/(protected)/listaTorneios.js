@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import TopBar from '../../components/TopBar';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { router } from "expo-router";
+
+// Função para formatar a data para DD-MM-YYYY
+const formatDateToDDMMYYYY = (dateString) => {
+    const partesData = dateString.split('-'); // Divide a data no formato YYYY-MM-DD
+    if (partesData.length !== 3) {
+        throw new Error("Formato de data inválido. Esperado: YYYY-MM-DD");
+    }
+    const ano = partesData[0];
+    const mes = partesData[1];
+    const dia = partesData[2];
+
+    return `${dia}-${mes}-${ano}`; // Retorna no formato DD-MM-YYYY
+};
 
 export default function ListTorneios() {
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
@@ -47,7 +61,7 @@ export default function ListTorneios() {
                 </View>
                 {isExpanded && (
                     <View style={styles.detailsContainer}>
-                        <Text style={styles.detailsText}>Data: {item.data}</Text>
+                        <Text style={styles.detailsText}>Data: {formatDateToDDMMYYYY(item.data_torneio)}</Text>
                         <Text style={styles.detailsText}>Local: {item.local}</Text>
                         <Text style={styles.detailsText}>{item.descricao}</Text>
                     </View>
@@ -81,17 +95,27 @@ export default function ListTorneios() {
             <View style={styles.top}>
                 <TopBar />
             </View>
-            <View style={styles.container}>
-                <Text style={styles.title}>Torneios de Beach Tennis</Text>
-                <Text style={styles.message}>Aqui estão os torneios cadastrados</Text>
-                <FlatList
-                    data={torneios}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={renderItem}
-                    contentContainerStyle={styles.listContent}
-                    showsVerticalScrollIndicator={false}
-                />
-            </View>
+            {torneios.length > 0 ? (
+                <View style={styles.container}>
+                    <Text style={styles.title}>Torneios de Beach Tennis</Text>
+                    <Text style={styles.message}>Aqui estão os torneios cadastrados</Text>
+                    <FlatList
+                        data={torneios}
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={renderItem}
+                        contentContainerStyle={styles.listContent}
+                        showsVerticalScrollIndicator={false}
+                    />
+                </View>
+            ) : (
+                <View style={styles.containerEmpty}>
+                    <Text style={styles.message}>Ainda não temos nenhum torneio cadastrado.</Text>
+                    <Text style={styles.message}>Cadastre um e comece a trabalhar</Text>
+                    <TouchableOpacity style={styles.addButton} onPress={() => router.push('/addTorneio')}>
+                        <Text style={styles.detailsText}>Cadastrar Torneio</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
         </>
     );
 }
@@ -112,6 +136,17 @@ const styles = StyleSheet.create({
         borderColor: '#FFA500',
         borderWidth: 2,
         borderRadius: 15,
+    },
+    containerEmpty: {
+        top: 50,
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        padding: 20,
+        borderColor: '#FFA500',
+        borderWidth: 2,
+        borderRadius: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     itemContainer: {
         padding: 20,
@@ -155,7 +190,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     message: {
-        fontSize: 16,
+        fontSize: 20,
         color: '#333',
         textAlign: 'center',
         marginBottom: 20,
@@ -168,8 +203,15 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     detailsText: {
+        fontSize: 23,
         color: '#fff',
-        fontWeight: 'bold',
+        fontFamily: 'bold',
+    },
+    addButton: {
+        backgroundColor: "#ffa500",
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 20,
     },
     detailsContainer: {
         padding: 15,
