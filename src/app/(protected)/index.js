@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert, Linking } from 'react-native';
 import TopBar from '../../components/TopBar';
 import Actions from '../../components/ActionsApp';
 import Pager from '../../components/PagerView';
@@ -59,7 +59,36 @@ export default function Home() {
             ]
         );
     };
-
+    const produtos = [
+        {
+            id: 1,
+            nome: 'Camiseta BeachDuo',
+            preco: 50.00,
+            foto: 'https://http2.mlstatic.com/D_NQ_NP_937626-MLB75553644721_042024-O.webp',
+            link_compra: "https://nutriflow.netlify.app"
+        },
+        {
+            id: 2,
+            nome: 'Bola HEAD ITF',
+            preco: 29.00,
+            foto: 'https://static.prospin.com.br/media/catalog/product/cache/0e3f1fa1e1f5782c73be0e8cb4ab3f9d/5/7/578102-bola-de-beach-tennis-head-pack-com-02-unidades.jpg',
+            link_compra: "https://nutriflow.netlify.app"
+        },
+        {
+            id: 3,
+            nome: 'Boné Shark',
+            preco: 30.00,
+            foto: 'https://images.tcdn.com.br/img/img_prod/589314/bone_beach_tennis_shark_tela_4809_1_f5e4ef8832f46313fab4b30ad2cb145a_20240515165917.jpg',
+            link_compra: "https://nutriflow.netlify.app"
+        },
+        {
+            id: 4,
+            nome: 'Raquete Shark Elite',
+            preco: 420.00,
+            foto: 'https://imgcentauro-a.akamaihd.net/1366x1366/M0L7G100.jpg',
+            link_compra: "https://nutriflow.netlify.app"
+        }
+    ]
     return (
         <View style={styles.container}>
             <StatusBar style="dark" />
@@ -72,7 +101,7 @@ export default function Home() {
                 <View style={styles.highlightSection}>
                     <Text style={styles.sectionTitle}>Novidades</Text>
                     {torneios.length > 0 ? (
-                        torneios.map(torneio => (
+                        torneios.slice(0, 4).map(torneio => (
                             <View key={torneio.id} style={styles.card}>
                                 <Image source={{ uri: torneio.foto }} style={styles.cardImage} />
                                 <View style={styles.cardInfo}>
@@ -89,8 +118,58 @@ export default function Home() {
                         </View>
                     )}
                 </View>
-            </ScrollView>
-        </View>
+                <View style={styles.lojaContainer}>
+                    <Text style={styles.lojaTitle}>Loja BeachDuo</Text>
+                    <View style={styles.row}>
+                        <View style={styles.lojaCard}>
+                            <Image source={{ uri: produtos[0].foto }} style={styles.lojaCardImage} />
+                            <View style={styles.lojaCardInfo}>
+                                <Text style={styles.lojaCardNome}>{produtos[0].nome}</Text>
+                                <Text style={styles.lojaCardText}>R$ {produtos[0].preco.toFixed(2)}</Text>
+                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[0].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                    <Fontisto name="shopping-basket" size={24} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.lojaCard}>
+                            <Image source={{ uri: produtos[1].foto }} style={styles.lojaCardImage} />
+                            <View style={styles.lojaCardInfo}>
+                                <Text style={styles.lojaCardNome}>{produtos[1].nome}</Text>
+                                <Text style={styles.lojaCardText}>R$ {produtos[1].preco.toFixed(2)}</Text>
+                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[1].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                    <Fontisto name="shopping-basket" size={24} color="white" />
+                                </TouchableOpacity>
+
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.row}>
+                        <View style={styles.lojaCard}>
+                            <Image source={{ uri: produtos[2].foto }} style={styles.lojaCardImage} />
+                            <View style={styles.lojaCardInfo}>
+                                <Text style={styles.lojaCardNome}>{produtos[2].nome}</Text>
+                                <Text style={styles.lojaCardText}>R$ {produtos[2].preco.toFixed(2)}</Text>
+                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[2].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                    <Fontisto name="shopping-basket" size={24} color="white" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.lojaCard}>
+                            <Image source={{ uri: produtos[3].foto }} style={styles.lojaCardImage} />
+                            <View style={styles.lojaCardInfo}>
+                                <Text style={styles.lojaCardNome}>{produtos[3].nome}</Text>
+                                <Text style={styles.lojaCardText}>R$ {produtos[3].preco.toFixed(2)}</Text>
+                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[3].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                    <Fontisto name="shopping-basket" size={24} color="white" />
+                                </TouchableOpacity>
+
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+            </ScrollView >
+        </View >
     );
 }
 
@@ -167,4 +246,64 @@ const styles = StyleSheet.create({
         fontFamily: 'bold',
         marginTop: 20,
     },
+    lojaContainer: {
+        padding: 20,
+        backgroundColor: '#ffa',
+        borderRadius: 10,
+        marginTop: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        alignItems: 'center',
+    },
+    lojaTitle: {
+        fontSize: 28,
+        color: '#ffa500',
+        fontFamily: 'bold',
+        marginBottom: 15,
+    },
+    lojaCard: {
+        justifyContent: "center",
+        alignItems: 'center',
+        flexDirection: 'column',
+        backgroundColor: '#ffa500',
+        borderRadius: 10,
+        overflow: 'hidden',
+        padding: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        marginBottom: 15,
+        width: '44%',
+    },
+    lojaCardImage: {
+        objectFit: 'scale-down',
+        width: '70%',
+        height: 100,
+        borderRadius: 15,
+    },
+    lojaCardInfo: {
+        flex: 1,
+        padding: 10,
+        justifyContent: 'center',
+    },
+    lojaCardNome: {
+        textAlign: 'center',
+        color: '#fff',
+        fontSize: 18,
+        fontFamily: 'semibold',
+    },
+    lojaCardText: {
+        textAlign: 'center',
+        color: '#fff',
+        fontSize: 16,
+        fontFamily: 'bold',
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    }
 });
