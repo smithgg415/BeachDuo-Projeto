@@ -1,5 +1,5 @@
 import { Text, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Alert } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { z } from "zod";
 import { useTorneioDatabase } from "../../database/useTorneioDatabase";
@@ -7,6 +7,8 @@ import { router } from "expo-router";
 import Constants from 'expo-constants';
 import TopBar from "../../components/TopBar";
 import { Ionicons } from "@expo/vector-icons";
+import { requestNotificationPermission, scheduleNotification } from "../../components/Notifications";
+import { useNotificationListener } from "../../components/Notifications";
 
 function formatDate(date) {
     const year = date.getFullYear();
@@ -16,6 +18,7 @@ function formatDate(date) {
 }
 
 export default function AddTorneio() {
+    useNotificationListener();
     const torneioSchema = z.object({
         nome: z.string().nonempty("Por favor, insira um nome para o torneio."),
         data_torneio: z.string(),
@@ -32,6 +35,10 @@ export default function AddTorneio() {
     const [descricao, setDescricao] = useState("");
     const [dataTorneio, setDataTorneio] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+
+    useEffect(() => {
+        requestNotificationPermission();
+    }, []);
 
     const handleDateChange = (event, selectedDate) => {
         const currentDate = selectedDate || dataTorneio;
@@ -52,6 +59,12 @@ export default function AddTorneio() {
             await torneioSchema.parseAsync(torneio);
             await createTorneio(torneio);
             Alert.alert("Sucesso", "Torneio criado! Relogue para atualizar a lista de torneios.");
+            
+            await scheduleNotification(
+                "Torneio Criado!",
+                `O torneio ${nome} foi criado com sucesso para ${dataTorneio.toLocaleDateString()}.`
+            );
+
             router.back();
         } catch (error) {
             Alert.alert("Erro", error.errors?.[0]?.message || "Erro: Não foi possível criar o torneio. Por favor, verifique os detalhes e tente novamente");
@@ -150,7 +163,7 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         borderRadius: 8,
         paddingHorizontal: 15,
-        paddingRight: 40, // Espaço para o ícone dentro do campo
+        paddingRight: 40,
         fontSize: 16,
         backgroundColor: '#fff',
         shadowColor: '#000',

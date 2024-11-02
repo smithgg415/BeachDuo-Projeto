@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import { useAuth } from "../hooks/Auth";
 import { router } from "expo-router";
-import logo from "../assets/images/logobeachduo.png";
+import logo from "../assets/images/logobeach.png";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 export default function App() {

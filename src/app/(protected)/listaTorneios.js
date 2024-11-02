@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Image, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import TopBar from '../../components/TopBar';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router } from "expo-router";
+
 
 const formatDateToDDMMYYYY = (dateString) => {
     const partesData = dateString.split('-');
@@ -67,6 +68,9 @@ export default function ListTorneios() {
                         <Text style={styles.cardText}>Data do torneio: {formatDateToDDMMYYYY(item.data_torneio)}</Text>
                         <Text style={styles.cardText}>Local do evento: {item.local}</Text>
                         <Text style={styles.cardText}>{item.descricao}</Text>
+                        <View style={styles.containerImage}>
+                            <Image source={{ uri: item.foto }} style={{ width: 140, height: 140, borderRadius: 10, marginTop: 10 }} />
+                        </View>
                     </View>
                 )}
             </Swipeable>
@@ -112,7 +116,7 @@ export default function ListTorneios() {
                         />
                     </View>
                     <View style={styles.containerMessage}>
-                        <Text style={styles.message}>Para apagar, arraste para o lado</Text>
+                        <Text style={styles.messageDelete}>Para apagar, arraste para o lado</Text>
                     </View>
                 </>
             ) : (
@@ -215,6 +219,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         fontFamily: 'bolditalic',
     },
+    messageDelete: {
+        fontSize: 20,
+        color: '#fff',
+        textAlign: 'center',
+        marginBottom: 10,
+        fontFamily: 'bolditalic',
+    },
     detailsButton: {
         backgroundColor: '#FFA500',
         paddingVertical: 5,
@@ -244,6 +255,14 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     containerMessage: {
+        marginTop: 10,
+        padding: 10,
+        position: 'relative',
+        backgroundColor: '#FFA500',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    containerImage: {
         justifyContent: 'center',
         alignItems: 'center',
     }

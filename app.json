@@ -5,10 +5,10 @@
     "scheme": "react-native-expo-2024",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/logobeachduo.png",
+    "icon": "./src/assets/images/logobeach.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/images/logobeachduo.png",
+      "image": "./src/assets/images/logobeach.png",
       "resizeMode": "contain",
       "backgroundColor": "#fff"
     },
@@ -17,12 +17,12 @@
     },
     "android": { 
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/logobeachduo.png",
+        "foregroundImage": "./src/assets/images/logobeach.png",
         "backgroundColor": "#fff"
       }
     },
     "web": {
-      "favicon": "./src/assets/images/logobeachduo.png"
+      "favicon": "./src/assets/images/logobeach.png"
     },
     "plugins": [
       "expo-router",
