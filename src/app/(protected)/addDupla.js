@@ -278,7 +278,7 @@ export default function AddDupla() {
                             <Modal animationType='fade' transparent={true} visible={duplaVisibleContinue} onRequestClose={hideDupla}>
                                 <View style={styles.modalBackground}>
                                     <View style={styles.modalContainer}>
-                                        <Text style={styles.alertTitle}>Parabéns, dupla adicionada com sucesso!</Text>
+                                        <Text style={styles.alertTitle}>Parabéns, dupla adicionada com sucesso! Relogue para atualizar a lista.</Text>
                                         <Text style={styles.alertMessage}>Continue adicionando</Text>
                                         <Ionicons name="checkmark-circle" size={50} color="#4caf50" style={{ marginBottom: 10 }} />
                                         <TouchableOpacity style={styles.alertConfirmation} onPress={hideAlertContinue}>

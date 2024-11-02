@@ -1,13 +1,30 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAuth } from "../../hooks/Auth";
 import Constants from 'expo-constants';
 import avatar from '../../assets/images/giacomelli.jpg';
+import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 export default function Perfil() {
     const { user, signOut } = useAuth();
+    const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
+    const [torneios, setTorneios] = useState([]);
+    const [updateList, setUpdateList] = useState(false);
     const statusBarHeight = Constants.statusBarHeight;
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const allTorneios = await getAllTorneios();
+                setTorneios(allTorneios);
+            } catch (error) {
+                console.error("Erro ao buscar dados: ", error);
+            }
+        };
+
+        fetchData();
+    }, [updateList]);
+
     return (
         <ScrollView style={styles.container}>
             <View style={styles.header}>
@@ -24,7 +41,20 @@ export default function Perfil() {
                 <Image source={avatar} style={styles.profileImage} />
                 <Text style={styles.userName}>{user?.user?.username || "Realize login para continuar"}</Text>
             </View>
+
             <View style={styles.actionsSection}>
+                <TouchableOpacity style={styles.actionButton} onPress={() => {
+                    if (torneios.length > 0) {
+                        router.push("listaTorneios")
+                    } else {
+                        Alert.alert("Ops...", "Você ainda não criou nenhum torneio.")
+                    }
+                }}
+
+                >
+                    <Ionicons name="trophy" size={20} color="#fff" />
+                    <Text style={styles.actionButtonText}>Torneios criados por você</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={() => { signOut() }}>
                     <Ionicons name="exit-outline" size={20} color="#fff" />
                     <Text style={styles.actionButtonText}>Sair da Conta</Text>
@@ -38,7 +68,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#ffa',
-        paddingTop: Constants.statusBarHeight+5
+        paddingTop: Constants.statusBarHeight + 5
     },
     header: {
         flexDirection: 'row',
@@ -47,7 +77,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#ffa500',
         paddingVertical: 15,
         paddingHorizontal: 20,
-        elevation: 3, 
+        elevation: 3,
     },
     headerTitle: {
         fontSize: 20,

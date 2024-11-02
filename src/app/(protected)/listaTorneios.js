@@ -7,9 +7,8 @@ import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router } from "expo-router";
 
-// Função para formatar a data para DD-MM-YYYY
 const formatDateToDDMMYYYY = (dateString) => {
-    const partesData = dateString.split('-'); // Divide a data no formato YYYY-MM-DD
+    const partesData = dateString.split('-');
     if (partesData.length !== 3) {
         throw new Error("Formato de data inválido. Esperado: YYYY-MM-DD");
     }
@@ -17,7 +16,7 @@ const formatDateToDDMMYYYY = (dateString) => {
     const mes = partesData[1];
     const dia = partesData[2];
 
-    return `${dia}-${mes}-${ano}`; // Retorna no formato DD-MM-YYYY
+    return `${dia}-${mes}-${ano}`;
 };
 
 export default function ListTorneios() {
@@ -43,27 +42,31 @@ export default function ListTorneios() {
         const isExpanded = item.id === expandedTorneioId;
 
         const renderRightActions = () => (
-            <TouchableOpacity onPress={() => handleDeleteTorneio(item.id)} style={styles.deleteButton}>
+            <TouchableOpacity onPress={() => handleDeleteTorneio(item.id)} style={styles.deleteButtonLeft}>
                 <Ionicons name="trash" size={24} color="#fff" />
             </TouchableOpacity>
         );
-
+        const renderLeftActions = () => (
+            <TouchableOpacity onPress={() => handleDeleteTorneio(item.id)} style={styles.deleteButtonRight}>
+                <Ionicons name="trash" size={24} color="#fff" />
+            </TouchableOpacity>
+        );
         return (
-            <Swipeable renderRightActions={renderRightActions}>
+            <Swipeable renderRightActions={renderRightActions} renderLeftActions={renderLeftActions}>
                 <View style={styles.itemContainer}>
                     <Text style={styles.itemText}>{item.nome}</Text>
                     <TouchableOpacity
                         style={styles.detailsButton}
                         onPress={() => setExpandedTorneioId(isExpanded ? null : item.id)}
                     >
-                        <Text style={styles.detailsText}>{isExpanded ? 'Menos Detalhes' : 'Detalhes'}</Text>
+                        <Text style={styles.cardText}>{isExpanded ? 'Ocultar Detalhes' : 'Detalhes'}</Text>
                     </TouchableOpacity>
                 </View>
                 {isExpanded && (
                     <View style={styles.detailsContainer}>
-                        <Text style={styles.detailsText}>Data: {formatDateToDDMMYYYY(item.data_torneio)}</Text>
-                        <Text style={styles.detailsText}>Local: {item.local}</Text>
-                        <Text style={styles.detailsText}>{item.descricao}</Text>
+                        <Text style={styles.cardText}>Data do torneio: {formatDateToDDMMYYYY(item.data_torneio)}</Text>
+                        <Text style={styles.cardText}>Local do evento: {item.local}</Text>
+                        <Text style={styles.cardText}>{item.descricao}</Text>
                     </View>
                 )}
             </Swipeable>
@@ -73,7 +76,7 @@ export default function ListTorneios() {
     const handleDeleteTorneio = async (id) => {
         Alert.alert(
             "Excluir Torneio",
-            "Tem certeza que deseja excluir este torneio?",
+            "Confirma a exclusão deste torneio? Esta ação não pode ser desfeita.",
             [
                 { text: "Cancelar", style: "cancel" },
                 {
@@ -96,23 +99,28 @@ export default function ListTorneios() {
                 <TopBar />
             </View>
             {torneios.length > 0 ? (
-                <View style={styles.container}>
-                    <Text style={styles.title}>Torneios de Beach Tennis</Text>
-                    <Text style={styles.message}>Aqui estão os torneios cadastrados</Text>
-                    <FlatList
-                        data={torneios}
-                        keyExtractor={item => item.id.toString()}
-                        renderItem={renderItem}
-                        contentContainerStyle={styles.listContent}
-                        showsVerticalScrollIndicator={false}
-                    />
-                </View>
+                <>
+                    <View style={styles.container}>
+                        <Text style={styles.title}>Gerenciamento de Torneios de Beach Tennis</Text>
+                        <Text style={styles.message}>Lista de Torneios Registrados</Text>
+                        <FlatList
+                            data={torneios}
+                            keyExtractor={item => item.id.toString()}
+                            renderItem={renderItem}
+                            contentContainerStyle={styles.listContent}
+                            showsVerticalScrollIndicator={false}
+                        />
+                    </View>
+                    <View style={styles.containerMessage}>
+                        <Text style={styles.message}>Para apagar, arraste para o lado</Text>
+                    </View>
+                </>
             ) : (
                 <View style={styles.containerEmpty}>
-                    <Text style={styles.message}>Ainda não temos nenhum torneio cadastrado.</Text>
-                    <Text style={styles.message}>Cadastre um e comece a trabalhar</Text>
+                    <Text style={styles.message}>Ainda não há nenhum torneio cadastrado.</Text>
+                    <Text style={styles.message}>Crie um novo torneio para iniciar.</Text>
                     <TouchableOpacity style={styles.addButton} onPress={() => router.push('/addTorneio')}>
-                        <Text style={styles.detailsText}>Cadastrar Torneio</Text>
+                        <Text style={styles.detailsText}>Criar Torneio</Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -171,7 +179,7 @@ const styles = StyleSheet.create({
         flex: 1,
         marginRight: 10,
     },
-    deleteButton: {
+    deleteButtonLeft: {
         top: 15,
         backgroundColor: '#FF3B30',
         justifyContent: 'center',
@@ -180,6 +188,17 @@ const styles = StyleSheet.create({
         height: 60,
         borderRadius: 10,
         marginLeft: 10,
+        elevation: 3,
+    },
+    deleteButtonRight: {
+        top: 15,
+        backgroundColor: '#FF3B30',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 60,
+        height: 60,
+        borderRadius: 10,
+        marginRight: 10,
         elevation: 3,
     },
     title: {
@@ -207,6 +226,11 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontFamily: 'bold',
     },
+    cardText: {
+        fontSize: 18,
+        color: '#fff',
+        fontFamily: 'bold',
+    },
     addButton: {
         backgroundColor: "#ffa500",
         padding: 10,
@@ -219,4 +243,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 5,
     },
+    containerMessage: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
 });

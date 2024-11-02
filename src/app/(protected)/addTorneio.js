@@ -17,9 +17,9 @@ function formatDate(date) {
 
 export default function AddTorneio() {
     const torneioSchema = z.object({
-        nome: z.string().nonempty("Nome é obrigatório"),
+        nome: z.string().nonempty("Por favor, insira um nome para o torneio."),
         data_torneio: z.string(),
-        local: z.string().nonempty("Local é obrigatório"),
+        local: z.string().nonempty("O local do torneio é necessário."),
         foto: z.string().url("URL da foto inválida"),
         descricao: z.string().optional(),
     });
@@ -51,10 +51,10 @@ export default function AddTorneio() {
         try {
             await torneioSchema.parseAsync(torneio);
             await createTorneio(torneio);
-            Alert.alert("Sucesso", "Torneio criado com sucesso!");
+            Alert.alert("Sucesso", "Torneio criado! Relogue para atualizar a lista de torneios.");
             router.back();
         } catch (error) {
-            Alert.alert("Erro", error.errors?.[0]?.message || "Erro ao criar torneio");
+            Alert.alert("Erro", error.errors?.[0]?.message || "Erro: Não foi possível criar o torneio. Por favor, verifique os detalhes e tente novamente");
         }
     };
 
@@ -100,7 +100,7 @@ export default function AddTorneio() {
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.inputWithIcon}
-                        placeholder="Foto (URL)"
+                        placeholder="Foto (URL do torneio, ex: https://...)"
                         onChangeText={setFoto}
                         value={foto}
                     />
@@ -110,7 +110,7 @@ export default function AddTorneio() {
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.inputWithIcon}
-                        placeholder="Descrição (opcional)"
+                        placeholder="Descreva brevemente o torneio."
                         onChangeText={setDescricao}
                         value={descricao}
                     />
