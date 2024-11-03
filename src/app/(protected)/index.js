@@ -27,13 +27,16 @@ export default function Home() {
     useEffect(() => {
         fetchTorneios();
     }, []);
-
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+    const formatDateToDDMMYYYY = (dateString) => {
+        const partesData = dateString.split('-');
+        if (partesData.length !== 3) {
+            throw new Error("Formato de data inválido. Esperado: YYYY-MM-DD");
+        }
+        const ano = partesData[0];
+        const mes = partesData[1];
+        const dia = partesData[2];
+    
+        return `${dia}-${mes}-${ano}`;
     };
 
     const handleDelete = async (id) => {
@@ -106,7 +109,7 @@ export default function Home() {
                                 <Image source={{ uri: torneio.foto }} style={styles.cardImage} />
                                 <View style={styles.cardInfo}>
                                     <Text style={styles.cardNome}>{torneio.nome}</Text>
-                                    <Text style={styles.cardText}>Data: {formatDate(torneio.data_torneio)}</Text>
+                                    <Text style={styles.cardText}>Data: {formatDateToDDMMYYYY(torneio.data_torneio)}</Text>
                                     <Text style={styles.cardText}>{torneio.local}</Text>
                                 </View>
                             </View>
