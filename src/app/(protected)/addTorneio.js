@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Alert } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Alert, Image } from "react-native";
 import { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { z } from "zod";
@@ -9,6 +9,7 @@ import TopBar from "../../components/TopBar";
 import { Ionicons } from "@expo/vector-icons";
 import { requestNotificationPermission, scheduleNotification } from "../../components/Notifications";
 import { useNotificationListener } from "../../components/Notifications";
+import * as ImagePicker from 'expo-image-picker';
 
 function formatDate(date) {
     const year = date.getFullYear();
@@ -35,6 +36,7 @@ export default function AddTorneio() {
     const [descricao, setDescricao] = useState("");
     const [dataTorneio, setDataTorneio] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         requestNotificationPermission();
@@ -44,6 +46,26 @@ export default function AddTorneio() {
         const currentDate = selectedDate || dataTorneio;
         setShowDatePicker(false);
         setDataTorneio(currentDate);
+    };
+
+    const handleImagePicker = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            Alert.alert("Erro", "Você precisa permitir o acesso à galeria para selecionar uma imagem.");
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setSelectedImage(result.assets[0].uri); 
+            setFoto(result.assets[0].uri); 
+        }
     };
 
     const handleSubmit = async () => {
@@ -59,7 +81,7 @@ export default function AddTorneio() {
             await torneioSchema.parseAsync(torneio);
             await createTorneio(torneio);
             Alert.alert("Sucesso", "Torneio criado! Relogue para atualizar a lista de torneios.");
-            
+
             await scheduleNotification(
                 "Torneio Criado!",
                 `O torneio ${nome} foi criado com sucesso para ${dataTorneio.toLocaleDateString()}.`
@@ -110,15 +132,12 @@ export default function AddTorneio() {
                     <Ionicons name="location" size={24} color="#FFA500" style={styles.iconInsideInput} />
                 </View>
 
-                <View style={styles.inputContainer}>
-                    <TextInput
-                        style={styles.inputWithIcon}
-                        placeholder="Foto (URL do torneio, ex: https://...)"
-                        onChangeText={setFoto}
-                        value={foto}
-                    />
-                    <Ionicons name="image" size={24} color="#FFA500" style={styles.iconInsideInput} />
-                </View>
+                <TouchableOpacity style={styles.imagePicker} onPress={handleImagePicker}>
+                    <Text style={styles.imageText}>{selectedImage ? "Imagem Selecionada" : "Selecionar Imagem"}</Text>
+                </TouchableOpacity>
+                {selectedImage && (
+                    <Image source={{ uri: selectedImage }} style={styles.imagePreview} />
+                )}
 
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -194,6 +213,29 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontFamily: 'bold',
+    },
+    imagePicker: {
+        width: '100%',
+        padding: 15,
+        backgroundColor: '#ffa500',
+        borderRadius: 8,
+        marginBottom: 15,
+        alignItems: 'center',
+    },
+    imageText: {
+        color: '#fff',
+        fontSize: 16,
+        fontFamily: 'bold',
+    },
+    imagePreview: {
+        borderWidth: 3,
+        borderColor: '#ffa500',
+        width: '100%',
+        height: 200,
+        borderRadius: 8,
+        marginTop: 10,
+        marginBottom: 15,
+        resizeMode: 'cover',
     },
     button: {
         width: '100%',

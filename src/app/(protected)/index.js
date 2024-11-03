@@ -240,11 +240,12 @@ const styles = StyleSheet.create({
         fontFamily: 'semibold',
     },
     noTorneiosText: {
+
         textAlign: 'center',
         color: '#666',
         fontSize: 16,
         fontFamily: 'bold',
-        marginTop: 20,
+        marginBottom: 20,
     },
     lojaContainer: {
         padding: 20,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { router } from "expo-router";
 import Constants from 'expo-constants';
@@ -27,7 +27,7 @@ export default function List() {
             try {
                 const allTorneios = await getAllTorneios();
                 setTorneios(allTorneios);
-                
+
                 const allDuplas = await getAllDuplas();
                 setDuplas(allDuplas);
             } catch (error) {
@@ -39,10 +39,10 @@ export default function List() {
     }, [updateList]);
 
     const filtrarDuplas = () => {
-        return torneioSelecionado === 'Todos' 
-            ? duplas 
+        return torneioSelecionado === 'Todos'
+            ? duplas
             : duplas.filter(dupla => dupla.torneio === torneioSelecionado);
-                
+
     };
 
     const contarDuplas = () => filtrarDuplas().length;
@@ -79,14 +79,16 @@ export default function List() {
             "Tem certeza que deseja excluir esta dupla?",
             [
                 { text: "Cancelar", style: "cancel" },
-                { text: "Excluir", onPress: async () => {
-                    try {
-                        await deleteDupla(id);
-                        setUpdateList(prev => !prev);
-                    } catch (error) {
-                        console.error("Erro ao excluir dupla: ", error);
+                {
+                    text: "Excluir", onPress: async () => {
+                        try {
+                            await deleteDupla(id);
+                            setUpdateList(prev => !prev);
+                        } catch (error) {
+                            console.error("Erro ao excluir dupla: ", error);
+                        }
                     }
-                }},
+                },
             ]
         );
     };
@@ -115,17 +117,20 @@ export default function List() {
                         </Picker>
                     </View>
                 </View>
-    
+
                 <Text style={styles.title}>Duplas de Beach Tennis</Text>
-    
-                <FlatList
-                    data={filtrarDuplas()}
-                    keyExtractor={item => item.id.toString()}
-                    renderItem={renderItem}
-                    contentContainerStyle={styles.listContent}
-                    showsVerticalScrollIndicator={false}
-                />
-    
+                {contarDuplas() > 0 ? (
+                    <FlatList
+                        data={filtrarDuplas()}
+                        keyExtractor={item => item.id.toString()}
+                        renderItem={renderItem}
+                        contentContainerStyle={styles.listContent}
+                        showsVerticalScrollIndicator={false}
+                    />
+                ) : (
+                    <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
+                )}
+
                 <View style={styles.counterContainer}>
                     <Ionicons name="people" size={28} color="#ffa500" style={styles.contadorIcon} />
                     <View style={styles.contadorConteudo}>
@@ -134,18 +139,18 @@ export default function List() {
                         {contarDuplas() > 0 ? (
                             <Text style={styles.contador}>{contarDuplas()}</Text>
                         ) : (
-                            <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
+                                <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
                         )}
                     </View>
                 </View>
-    
+
                 <TouchableOpacity style={styles.backButton} onPress={comeBack}>
                     <Ionicons name="arrow-back" size={20} color="#fff" />
                     <Text style={styles.backButtonText}>Voltar</Text>
                 </TouchableOpacity>
             </View>
         </>
-    );    
+    );
 }
 
 const styles = StyleSheet.create({
