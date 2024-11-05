@@ -43,15 +43,9 @@ export default function Perfil() {
             </View>
 
             <View style={styles.actionsSection}>
-                <TouchableOpacity style={styles.actionButton} onPress={() => {
-                    if (torneios.length > 0) {
-                        router.push("listaTorneios")
-                    } else {
-                        Alert.alert("Ops...", "Você ainda não criou nenhum torneio.")
-                    }
-                }}
-
-                >
+                <TouchableOpacity
+                    style={styles.actionButton}
+                    onPress={() => torneios.length > 0 ? router.push("listaTorneios") : Alert.alert("Ops...", "Você ainda não criou nenhum torneio.")}>
                     <Ionicons name="trophy" size={20} color="#fff" />
                     <Text style={styles.actionButtonText}>Torneios criados por você</Text>
                 </TouchableOpacity>

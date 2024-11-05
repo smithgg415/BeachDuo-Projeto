@@ -35,6 +35,7 @@ export async function initializeDatabase(database) {
                 local TEXT NOT NULL, 
                 data_torneio TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 foto TEXT NOT NULL,
+                linkLocal TEXT NOT NULL,
                 descricao TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, TouchableOpacity, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Image, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Linking } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import TopBar from '../../components/TopBar';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import Constants from 'expo-constants';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { router } from "expo-router";
-
+import { useAuth } from '../../hooks/Auth';
 
 const formatDateToDDMMYYYY = (dateString) => {
     const partesData = dateString.split('-');
@@ -16,11 +16,12 @@ const formatDateToDDMMYYYY = (dateString) => {
     const ano = partesData[0];
     const mes = partesData[1];
     const dia = partesData[2];
-
+    
     return `${dia}-${mes}-${ano}`;
 };
 
 export default function ListTorneios() {
+    const { user } = useAuth();
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
     const [torneios, setTorneios] = useState([]);
     const [updateList, setUpdateList] = useState(false);
@@ -65,9 +66,14 @@ export default function ListTorneios() {
                 </View>
                 {isExpanded && (
                     <View style={styles.detailsContainer}>
+                        <Text style={styles.cardText}>Criado por: {user?.user?.username}</Text>
                         <Text style={styles.cardText}>Data do torneio: {formatDateToDDMMYYYY(item.data_torneio)}</Text>
                         <Text style={styles.cardText}>Local do evento: {item.local}</Text>
-                        <Text style={styles.cardText}>{item.descricao}</Text>
+                        <TouchableOpacity onPress={() => Linking.openURL(item.linkLocal)} style={styles.buttonAddress}>
+                            <Ionicons name="location-outline" size={24} color="white" />
+                            <Text style={styles.address}>Acesse o endereço</Text>
+                        </TouchableOpacity>
+                        <Text style={styles.cardTextDescricao}>Descrição: {item.descricao}</Text>
                         <View style={styles.containerImage}>
                             <Image source={{ uri: item.foto }} style={{ width: 140, height: 140, borderRadius: 10, marginTop: 10 }} />
                         </View>
@@ -242,6 +248,12 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontFamily: 'bold',
     },
+    cardTextDescricao: {
+        fontSize: 14,
+        textAlign: 'justify',
+        color: '#fff',
+        fontFamily: 'bold',
+    },
     addButton: {
         backgroundColor: "#ffa500",
         padding: 10,
@@ -265,5 +277,20 @@ const styles = StyleSheet.create({
     containerImage: {
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    buttonAddress: {
+        flexDirection: 'row',
+        backgroundColor: '#007b',
+        padding: 5,
+        borderRadius: 10,
+        marginBottom: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    address: {
+        color: 'white',
+        fontSize: 20,
+        fontFamily: 'bolditalic',
+        marginLeft: 5,
+    },
 });

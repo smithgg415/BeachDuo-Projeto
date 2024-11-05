@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert, Linking } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert, Linking, ActivityIndicator } from 'react-native';
 import TopBar from '../../components/TopBar';
 import Actions from '../../components/ActionsApp';
 import Pager from '../../components/PagerView';
@@ -8,7 +8,6 @@ import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { useAuth } from '../../hooks/Auth';
 import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { ActivityIndicator } from 'react-native';
 
 export default function Home() {
     const { user } = useAuth();
@@ -35,8 +34,8 @@ export default function Home() {
         const ano = partesData[0];
         const mes = partesData[1];
         const dia = partesData[2];
-    
-        return `${dia}-${mes}-${ano}`;
+
+        return `${dia}/${mes}/${ano}`;
     };
 
     const handleDelete = async (id) => {
@@ -65,31 +64,31 @@ export default function Home() {
     const produtos = [
         {
             id: 1,
-            nome: 'Camiseta BeachDuo',
-            preco: 50.00,
-            foto: 'https://http2.mlstatic.com/D_NQ_NP_937626-MLB75553644721_042024-O.webp',
-            link_compra: "https://nutriflow.netlify.app"
+            nome: 'Camiseta Shark BeachDuo',
+            preco: 89.90,
+            foto: 'https://sharkbeachtennis.com.br/cdn/shop/products/4c5bd8fa449e7452c1b9b2f6dea6f4a1_e72c471a-f043-4ae7-9af2-958e9f43e697.jpg?v=1685732772',
+            link_compra: "https://sharkbeachtennis.com.br/products/shm22007-camiseta-masculina-shark?variant=45296989274425"
         },
         {
             id: 2,
             nome: 'Bola HEAD ITF',
-            preco: 29.00,
+            preco: 42.66,
             foto: 'https://static.prospin.com.br/media/catalog/product/cache/0e3f1fa1e1f5782c73be0e8cb4ab3f9d/5/7/578102-bola-de-beach-tennis-head-pack-com-02-unidades.jpg',
-            link_compra: "https://nutriflow.netlify.app"
+            link_compra: "https://www.casadotenista.com.br/bola-de-beach-tennis-2-bolas-head/p?srsltid=AfmBOoqZhYr9yKjfu64XxcuWyBMv16NLUFUHkVHHK_S6kW1j4bjWE9MT"
         },
         {
             id: 3,
             nome: 'Boné Shark',
-            preco: 30.00,
+            preco: 78.90,
             foto: 'https://images.tcdn.com.br/img/img_prod/589314/bone_beach_tennis_shark_tela_4809_1_f5e4ef8832f46313fab4b30ad2cb145a_20240515165917.jpg',
-            link_compra: "https://nutriflow.netlify.app"
+            link_compra: "https://www.protenista.com.br/bone-beach-tennis-shark-tela"
         },
         {
             id: 4,
             nome: 'Raquete Shark Elite',
-            preco: 420.00,
+            preco: 899.99,
             foto: 'https://imgcentauro-a.akamaihd.net/1366x1366/M0L7G100.jpg',
-            link_compra: "https://nutriflow.netlify.app"
+            link_compra: "https://www.prospin.com.br/raquete-de-beach-tennis-shark-elite-shr039?srsltid=AfmBOopCNW_qDodusy8iu-TZWCw1xYjNmmd4IiH9TfTr3tTds03J0uzW"
         }
     ]
     return (
@@ -101,6 +100,21 @@ export default function Home() {
                 <View style={styles.bannerContainer}>
                     <Pager />
                 </View>
+                <View>
+                    <Text style={styles.sectionTitleSocialMedias}>Acompanhe o BeachDuo nas redes socias!</Text>
+                </View>
+                <View style={styles.circleActions}>
+                    <TouchableOpacity style={styles.circles} onPress={() => { Linking.openURL("https://www.instagram.com/beachtennispiquerobi/") }}>
+                        <Image source={require('../../assets/images/instagramlogo.png')} style={{ width: 40, height: 40 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.circles} onPress={() => { Linking.openURL("https://app.letzplay.me/QuadraBTP") }}>
+                        <Image source={require('../../assets/images/letzplaylogo.png')} style={{ width: 40, height: 40 }} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.circles} onPress={() => { Linking.openURL("https://beachpiquerobi.netlify.app") }}>
+                        <Fontisto name="world-o" size={40} color="#fff" />
+                    </TouchableOpacity>
+
+                </View>
                 <View style={styles.highlightSection}>
                     <Text style={styles.sectionTitle}>Novidades</Text>
                     {torneios.length > 0 ? (
@@ -111,6 +125,10 @@ export default function Home() {
                                     <Text style={styles.cardNome}>{torneio.nome}</Text>
                                     <Text style={styles.cardText}>Data: {formatDateToDDMMYYYY(torneio.data_torneio)}</Text>
                                     <Text style={styles.cardText}>{torneio.local}</Text>
+                                    <TouchableOpacity onPress={() => { Linking.openURL(torneio.linkLocal) }} style={styles.buttonAddress}>
+                                        <Ionicons name="location-outline" size={24} color="white" />
+                                        <Text style={styles.address}>Acesse o endereço</Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         ))
@@ -203,6 +221,13 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         color: '#ffa500',
     },
+    sectionTitleSocialMedias: {
+        fontSize: 24,
+        fontFamily: 'bold',
+        marginBottom: 15,
+        color: '#ffa500',
+        textAlign: 'center',
+    },
     card: {
         flexDirection: 'row',
         width: '100%',
@@ -230,14 +255,13 @@ const styles = StyleSheet.create({
     },
     cardNome: {
         top: -16,
-        left: -15,
         color: '#fff',
         fontSize: 15,
         fontFamily: 'bold',
     },
     cardText: {
         textAlign: 'center',
-        color: 'rgba(0, 0, 0, 0.5)',
+        color: '#fff',
         top: -10,
         fontSize: 16,
         fontFamily: 'semibold',
@@ -309,5 +333,41 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '100%',
+    },
+    buttonAddress: {
+        flexDirection: 'row',
+        backgroundColor: '#007b',
+        padding: 5,
+        borderRadius: 10,
+        marginBottom: 10,
+    },
+    address: {
+        color: 'white',
+        fontSize: 16,
+        fontFamily: 'bolditalic',
+        marginLeft: 5,
+    },
+    circleActions: {
+        backgroundColor: '#fff',
+        margin: 20,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 15,
+        alignItems: "center",
+        marginTop: 20,
+        borderRadius: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
+
+    circles: {
+        backgroundColor: "#ffa500",
+        padding: 10,
+        borderRadius: 50,
+        elevation: 3,
     }
 });

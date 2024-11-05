@@ -24,6 +24,7 @@ export default function AddTorneio() {
         nome: z.string().nonempty("Por favor, insira um nome para o torneio."),
         data_torneio: z.string(),
         local: z.string().nonempty("O local do torneio é necessário."),
+        linkLocal: z.string().url("URL do local inválida"),
         foto: z.string().url("URL da foto inválida"),
         descricao: z.string().optional(),
     });
@@ -34,6 +35,7 @@ export default function AddTorneio() {
     const [local, setLocal] = useState("");
     const [foto, setFoto] = useState("");
     const [descricao, setDescricao] = useState("");
+    const [linkLocal, setLinkLocal] = useState("");
     const [dataTorneio, setDataTorneio] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
@@ -73,6 +75,7 @@ export default function AddTorneio() {
             nome,
             data_torneio: formatDate(dataTorneio),
             local,
+            linkLocal,
             foto,
             descricao,
         };
@@ -128,6 +131,15 @@ export default function AddTorneio() {
                         placeholder="Local"
                         onChangeText={setLocal}
                         value={local}
+                    />
+                    <Ionicons name="location" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                </View>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.inputWithIcon}
+                        placeholder="Link endereço Google Maps"
+                        onChangeText={setLinkLocal}
+                        value={linkLocal}
                     />
                     <Ionicons name="location" size={24} color="#FFA500" style={styles.iconInsideInput} />
                 </View>

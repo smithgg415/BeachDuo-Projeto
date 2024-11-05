@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import {
   DrawerContentScrollView,
   DrawerItemList,
@@ -8,6 +8,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuth } from "../../hooks/Auth/index";
 import { AntDesign } from "@expo/vector-icons";
+
 
 function CustomDrawerContent(props) {
   const { user, signOut } = useAuth();
@@ -47,9 +48,11 @@ function CustomDrawerContent(props) {
           backgroundColor: "#007bff",
           margin: 10,
           borderRadius: 10,
+          flexDirection: "row",
         }}
       >
-        <Text style={{ color: "#fff", fontFamily: "regular" }}>LogOut</Text>
+        <Text style={{ color: "#fff", fontFamily: "bolditalic", fontSize: 20, marginRight:10, marginLeft:10 }}>LogOut</Text>
+        <Entypo name="log-out" size={24} color="#fff" />
       </TouchableOpacity>
     </View>
   );
@@ -115,7 +118,7 @@ const DrawerLayout = () => {
             },
           }}
         />
-        
+
         <Drawer.Screen
           name="listaTorneios"
           options={{

@@ -3,10 +3,10 @@ import { useSQLiteContext } from "expo-sqlite";
 export function useTorneioDatabase() {
     const database = useSQLiteContext();
 
-    async function createTorneio({ nome, data_torneio, local, foto, descricao }) {
-        console.log("createTorneio: ", { nome, data_torneio, local, foto, descricao });
+    async function createTorneio({ nome, data_torneio, local, linkLocal, foto, descricao }) {
+        console.log("createTorneio: ", { nome, data_torneio, local, linkLocal, foto, descricao });
         const statement = await database.prepareAsync(`
-            INSERT INTO torneios (nome, data_torneio, local, foto, descricao) VALUES ($nome, $data_torneio, $local, $foto, $descricao);
+            INSERT INTO torneios (nome, data_torneio, local, linkLocal, foto, descricao) VALUES ($nome, $data_torneio, $local, $linkLocal, $foto, $descricao);
         `);
 
         try {
@@ -14,6 +14,7 @@ export function useTorneioDatabase() {
                 $nome: nome, 
                 $data_torneio: data_torneio,
                 $local: local, 
+                $linkLocal: linkLocal,
                 $foto: foto, 
                 $descricao: descricao 
             });
