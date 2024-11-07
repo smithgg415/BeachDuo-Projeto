@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { useAuth } from "../../hooks/Auth";
 import Constants from 'expo-constants';
-import avatar from '../../assets/images/giacomelli.jpg';
+import avatar from '../../assets/images/giacomelli2.jpg';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 export default function Perfil() {
     const { user, signOut } = useAuth();

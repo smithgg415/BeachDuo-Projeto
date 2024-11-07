@@ -62,7 +62,6 @@ function CustomDrawerContent(props) {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Foto de Perfil */}
       <TouchableOpacity onPress={openModal}>
         <Image
           source={imageUri ? { uri: imageUri } : require("../../assets/images/placeholder.png")}
@@ -112,7 +111,6 @@ function CustomDrawerContent(props) {
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
 
-      {/* Botão de LogOut */}
       <TouchableOpacity
         onPress={handleLogOut}
         style={styles.logout}
