@@ -5,8 +5,9 @@ import PagerView from 'react-native-pager-view';
 
 const items = [
     { id: 1, title: '2° Open de Beach Tennis A. Maui', image:require('../assets/images/logomaui.png'), data: '11/09/2024' },
-    { id: 2, title: '5° Open de Beach Tennis SUN7', image: require('../assets/images/logosun7.png'), data: '25/12/2024' },
-    { id: 3, title: '4° Cumbuca de Beach Piquerobi', image: require('../assets/images/bannersite.png'), data: '25/12/2024' },
+    { id: 2, title: '1° Torneio Paradise', image: require('../assets/images/torneioparadise.png'), data: '25/12/2024' },
+    { id: 3, title: '5° Open de Beach Tennis SUN7', image: require('../assets/images/logosun7.png'), data: '25/12/2024' },
+    { id: 4, title: '1° Torneio interno Itaguará', image: require('../assets/images/banner.png'), data: '11/03/2024' },
 ];
 
 export default function Pager() {
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     indicator: {
-        width: 50,
+        width: 10,
         height: 5,
         borderRadius: 5,
         backgroundColor: '#ccc',

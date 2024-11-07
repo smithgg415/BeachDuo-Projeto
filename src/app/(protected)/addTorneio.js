@@ -141,7 +141,7 @@ export default function AddTorneio() {
                         onChangeText={setLinkLocal}
                         value={linkLocal}
                     />
-                    <Ionicons name="location" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                    <Ionicons name="logo-google" size={24} color="#FFA500" style={styles.iconInsideInput} />
                 </View>
 
                 <TouchableOpacity style={styles.imagePicker} onPress={handleImagePicker}>

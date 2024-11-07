@@ -1,17 +1,60 @@
-import { Entypo, Ionicons } from "@expo/vector-icons";
-import {
-  DrawerContentScrollView,
-  DrawerItemList,
-} from "@react-navigation/drawer";
+import React, { useState, useEffect } from 'react';
+import { Entypo, Ionicons, AntDesign } from "@expo/vector-icons";
+import { DrawerContentScrollView, DrawerItemList } from "@react-navigation/drawer";
 import { Drawer } from "expo-router/drawer";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, Alert } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from "../../hooks/Auth/index";
-import { AntDesign } from "@expo/vector-icons";
-
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 function CustomDrawerContent(props) {
   const { user, signOut } = useAuth();
+  const [imageUri, setImageUri] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setImageUri(null);
+  }, [user]);
+
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleImagePick = async (type) => {
+    let result;
+
+    if (type === 'gallery') {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+    } else if (type === 'camera') {
+      result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      });
+    }
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
+
+    closeModal();
+  };
+
+  const handleRemoveImage = () => {
+    setImageUri(null);
+    closeModal();
+  };
 
   const handleLogOut = async () => {
     await signOut();
@@ -19,9 +62,10 @@ function CustomDrawerContent(props) {
 
   return (
     <View style={{ flex: 1 }}>
-      <View>
+      {/* Foto de Perfil */}
+      <TouchableOpacity onPress={openModal}>
         <Image
-          source={require("../../assets/images/giacomelli.jpg")}
+          source={imageUri ? { uri: imageUri } : require("../../assets/images/placeholder.png")}
           style={{
             width: 120,
             height: 120,
@@ -30,28 +74,50 @@ function CustomDrawerContent(props) {
             borderRadius: 60,
           }}
         />
-      </View>
-      <View>
-        <Text style={{ fontSize: 20, textAlign: "center", fontFamily: "bold" }}>
-          {user?.user?.username || "Faça login"}
-        </Text>
-      </View>
+      </TouchableOpacity>
+      <Text style={{ fontSize: 20, textAlign: "center", fontFamily: "bold" }}>
+        {user?.user?.username || "Faça login"}
+      </Text>
+
+      <Modal visible={modalVisible} animationType="fade" transparent={true}>
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContent}>
+            <View style={{flexDirection:"column"}}>
+              <View>
+                <Text style={styles.modalTitle}>Escolha uma opção</Text>
+              </View>
+              <View style={{flexDirection:"row"}}>
+                <TouchableOpacity style={styles.modalButton} onPress={() => handleImagePick('gallery')}>
+                <FontAwesome name="file-photo-o" size={35} color="black" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.modalButton} onPress={() => handleImagePick('camera')}>
+                <MaterialIcons name="add-a-photo" size={35} color="black" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.modalButton} onPress={handleRemoveImage}>
+                  <Ionicons name="trash" size={35} color="#d9534f" />
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+                  <Ionicons name="close" size={35} color="#000" />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <DrawerContentScrollView {...props}>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
+
+      {/* Botão de LogOut */}
       <TouchableOpacity
         onPress={handleLogOut}
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          height: 50,
-          backgroundColor: "#007bff",
-          margin: 10,
-          borderRadius: 10,
-          flexDirection: "row",
-        }}
+        style={styles.logout}
       >
-        <Text style={{ color: "#fff", fontFamily: "bolditalic", fontSize: 20, marginRight:10, marginLeft:10 }}>LogOut</Text>
+        <Text style={{ color: "#fff", fontFamily: "bolditalic", fontSize: 20, marginRight: 10, marginLeft: 10 }}>LogOut</Text>
         <Entypo name="log-out" size={24} color="#fff" />
       </TouchableOpacity>
     </View>
@@ -75,10 +141,11 @@ const DrawerLayout = () => {
             },
           }}
         />
+
         <Drawer.Screen
           name="addTorneio"
           options={{
-            drawerLabel: "Criar torneio",
+            drawerLabel: "Criar Torneio",
             drawerIcon: () => (
               <Ionicons name="trophy" size={35} color="#000" />
             ),
@@ -90,6 +157,7 @@ const DrawerLayout = () => {
             },
           }}
         />
+
         <Drawer.Screen
           name="addDupla"
           options={{
@@ -105,6 +173,7 @@ const DrawerLayout = () => {
             },
           }}
         />
+
         <Drawer.Screen
           name="listaDuplas"
           options={{
@@ -132,13 +201,28 @@ const DrawerLayout = () => {
             },
           }}
         />
+
+        <Drawer.Screen
+          name="montarJogos"
+          options={{
+            drawerLabel: "Montar Jogos",
+            drawerIcon: () => <MaterialIcons name="sports-tennis" size={35} color="#000" />,
+            headerShown: false,
+            drawerActiveBackgroundColor: "#ffa500",
+            drawerActiveTintColor: "#fff",
+            drawerLabelStyle: {
+              fontFamily: "bold",
+            },
+          }}
+        />
+
         <Drawer.Screen
           name="perfil"
           options={{
             drawerLabel: "Perfil",
-            drawerActiveBackgroundColor: "#ffa500",
             drawerIcon: () => <Ionicons name="person" size={35} color="#000" />,
             headerShown: false,
+            drawerActiveBackgroundColor: "#ffa500",
             drawerActiveTintColor: "#fff",
             drawerActiveBackgroundColor: "#ffa500",
             drawerLabelStyle: {
@@ -156,21 +240,44 @@ export default function Layout() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    borderRadius: 20,
-    width: "80%",
-    height: 60,
-    flexDirection: "row",
-    justifyContent: "space-around",
+  logout: {
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffa500",
-    position: "absolute",
-    bottom: 20,
-    left: 40,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
+    height: 50,
+    backgroundColor: "#007bff",
+    margin: 10,
+    borderRadius: 10,
+    flexDirection: "row",
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    height: 200,
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  modalButtonText: {
+    fontSize: 16,
+    fontFamily: 'bold',
+    marginLeft: 10,
   },
 });

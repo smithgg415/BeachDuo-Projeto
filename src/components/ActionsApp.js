@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from "react-nati
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function Actions() {
     return (
@@ -22,6 +23,10 @@ export default function Actions() {
                 <TouchableOpacity style={styles.btn} onPress={() => router.push("listaTorneios")}>
                     <Ionicons name="list" size={30} color="#FFA500" />
                     <Text style={styles.btnName}>Lista de Torneios</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push("/montarJogos")}>
+                <MaterialIcons name="sports-tennis" size={35} color="#ffa500" />
+                    <Text style={styles.btnName}>Montar Jogos</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>
