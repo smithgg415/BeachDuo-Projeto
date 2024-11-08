@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
-    height: 200,
+    height: 150,
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
@@ -263,7 +263,8 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'bolditalic',
+    textAlign: 'center',
     marginBottom: 15,
   },
   modalButton: {

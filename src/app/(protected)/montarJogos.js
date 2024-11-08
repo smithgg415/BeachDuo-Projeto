@@ -137,7 +137,7 @@ export default function MontarJogos() {
                                             </TouchableOpacity>
                                         )}
                                     >
-                                        <View style={styles.jogoItem}>
+                                        <View style={[styles.jogoItem, { marginBottom: 10 }]}>
                                             <Text style={styles.jogoText}>{item.jogo}</Text>
                                         </View>
                                     </Swipeable>
@@ -228,6 +228,8 @@ const styles = StyleSheet.create({
         borderColor: '#ffa500',
         borderRadius: 12,
         padding: 20,
+        height: 320,
+        overflow: "scroll",
         marginTop: 20,
         marginBottom: 30,
     },
