@@ -13,7 +13,22 @@ export default function Home() {
     const { user } = useAuth();
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
     const [torneios, setTorneios] = useState([]);
-
+    const handleRedirect = (link_compra) => {
+        Alert.alert(
+            "Redirecionamento Externo",
+            "Você será redirecionado para fora do app, deseja continuar?",
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                {
+                    text: "Continuar",
+                    onPress: () => Linking.openURL(link_compra)
+                }
+            ]
+        );
+    };
     const fetchTorneios = async () => {
         try {
             const allTorneios = await getAllTorneios();
@@ -147,9 +162,15 @@ export default function Home() {
                             <View style={styles.lojaCardInfo}>
                                 <Text style={styles.lojaCardNome}>{produtos[0].nome}</Text>
                                 <Text style={styles.lojaCardText}>R$ {produtos[0].preco.toFixed(2)}</Text>
-                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[0].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        handleRedirect(produtos[0].link_compra);
+                                    }}
+                                    style={{ alignItems: "center", marginTop: 5 }}
+                                >
                                     <Fontisto name="shopping-basket" size={24} color="white" />
                                 </TouchableOpacity>
+
                             </View>
                         </View>
                         <View style={styles.lojaCard}>
@@ -157,9 +178,15 @@ export default function Home() {
                             <View style={styles.lojaCardInfo}>
                                 <Text style={styles.lojaCardNome}>{produtos[1].nome}</Text>
                                 <Text style={styles.lojaCardText}>R$ {produtos[1].preco.toFixed(2)}</Text>
-                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[1].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        handleRedirect(produtos[1].link_compra); // Use handleRedirect que já cuida do redirecionamento
+                                    }}
+                                    style={{ alignItems: "center", marginTop: 5 }}
+                                >
                                     <Fontisto name="shopping-basket" size={24} color="white" />
                                 </TouchableOpacity>
+
 
                             </View>
                         </View>
@@ -170,9 +197,15 @@ export default function Home() {
                             <View style={styles.lojaCardInfo}>
                                 <Text style={styles.lojaCardNome}>{produtos[2].nome}</Text>
                                 <Text style={styles.lojaCardText}>R$ {produtos[2].preco.toFixed(2)}</Text>
-                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[2].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        handleRedirect(produtos[2].link_compra); // Use handleRedirect que já cuida do redirecionamento
+                                    }}
+                                    style={{ alignItems: "center", marginTop: 5 }}
+                                >
                                     <Fontisto name="shopping-basket" size={24} color="white" />
                                 </TouchableOpacity>
+
                             </View>
                         </View>
                         <View style={styles.lojaCard}>
@@ -180,9 +213,15 @@ export default function Home() {
                             <View style={styles.lojaCardInfo}>
                                 <Text style={styles.lojaCardNome}>{produtos[3].nome}</Text>
                                 <Text style={styles.lojaCardText}>R$ {produtos[3].preco.toFixed(2)}</Text>
-                                <TouchableOpacity onPress={() => { Linking.openURL(produtos[3].link_compra) }} style={{ alignItems: "center", marginTop: 5 }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        handleRedirect(produtos[3].link_compra);
+                                    }}
+                                    style={{ alignItems: "center", marginTop: 5 }}
+                                >
                                     <Fontisto name="shopping-basket" size={24} color="white" />
                                 </TouchableOpacity>
+
 
                             </View>
                         </View>
@@ -222,10 +261,14 @@ const styles = StyleSheet.create({
         color: '#ffa500',
     },
     sectionTitleSocialMedias: {
-        fontSize: 24,
-        fontFamily: 'bold',
-        marginBottom: 15,
-        color: '#ffa500',
+        marginBottom: 20,
+        marginTop: 20,
+        fontFamily: "bolditalic",
+        backgroundColor: "#007b",
+        color: "#fff",
+        width: "100%",
+        paddingBottom: 5,
+        fontSize: 27,
         textAlign: 'center',
     },
     card: {
@@ -286,8 +329,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     lojaTitle: {
+        backgroundColor: '#007b',
+        padding: 10,
+        borderRadius: 10,
+        color: '#fff',
         fontSize: 28,
-        color: '#ffa500',
         fontFamily: 'bold',
         marginBottom: 15,
     },
