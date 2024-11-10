@@ -32,7 +32,7 @@ export default function MontarJogos() {
 
         fetchData();
     }, []);
-
+    
     const filtrarDuplas = () => {
         return torneioSelecionado === 'Todos'
             ? duplas

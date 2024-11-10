@@ -22,7 +22,7 @@ export function useDuplasDatabase() {
     async function getAllDuplas() {
         try {
             const result = await database.getAllAsync(`
-                SELECT id, jogadorOne, jogadorTwo, torneio FROM duplas
+                SELECT * FROM duplas
             `);
             return result;
         } catch (error) {

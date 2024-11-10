@@ -116,7 +116,7 @@ export default function Home() {
                     <Pager />
                 </View>
                 <View>
-                    <Text style={styles.sectionTitleSocialMedias}>Acompanhe o BeachDuo nas redes socias!</Text>
+                    <Text style={styles.sectionTitleSocialMedias}>Acompanhe o BeachDuo nas redes sociais!</Text>
                 </View>
                 <View style={styles.circleActions}>
                     <TouchableOpacity style={styles.circles} onPress={() => { Linking.openURL("https://www.instagram.com/beachtennispiquerobi/") }}>
@@ -162,15 +162,9 @@ export default function Home() {
                             <View style={styles.lojaCardInfo}>
                                 <Text style={styles.lojaCardNome}>{produtos[0].nome}</Text>
                                 <Text style={styles.lojaCardText}>R$ {produtos[0].preco.toFixed(2)}</Text>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        handleRedirect(produtos[0].link_compra);
-                                    }}
-                                    style={{ alignItems: "center", marginTop: 5 }}
-                                >
+                                <TouchableOpacity onPress={() => { handleRedirect(produtos[0].link_compra); }} style={{ alignItems: "center", marginTop: 5 }}>
                                     <Fontisto name="shopping-basket" size={24} color="white" />
                                 </TouchableOpacity>
-
                             </View>
                         </View>
                         <View style={styles.lojaCard}>
@@ -180,14 +174,10 @@ export default function Home() {
                                 <Text style={styles.lojaCardText}>R$ {produtos[1].preco.toFixed(2)}</Text>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        handleRedirect(produtos[1].link_compra); // Use handleRedirect que já cuida do redirecionamento
-                                    }}
-                                    style={{ alignItems: "center", marginTop: 5 }}
-                                >
+                                        handleRedirect(produtos[1].link_compra)
+                                    }} style={{ alignItems: "center", marginTop: 5 }}>
                                     <Fontisto name="shopping-basket" size={24} color="white" />
                                 </TouchableOpacity>
-
-
                             </View>
                         </View>
                     </View>
@@ -199,7 +189,7 @@ export default function Home() {
                                 <Text style={styles.lojaCardText}>R$ {produtos[2].preco.toFixed(2)}</Text>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        handleRedirect(produtos[2].link_compra); // Use handleRedirect que já cuida do redirecionamento
+                                        handleRedirect(produtos[2].link_compra);
                                     }}
                                     style={{ alignItems: "center", marginTop: 5 }}
                                 >
@@ -255,7 +245,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     sectionTitle: {
-        fontSize: 24,
+        fontSize: 30,
         fontFamily: 'bold',
         marginBottom: 15,
         color: '#ffa500',

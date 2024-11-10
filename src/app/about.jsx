@@ -42,7 +42,7 @@ export default function About() {
                 </View>
 
                 <TypingText
-                    text="Olá, Sou o Giacomelli!"
+                    text="Olá, Sou o Smith!"
                     speed={100}
                     style={styles.description}
                 />
