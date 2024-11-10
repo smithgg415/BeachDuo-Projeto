@@ -8,24 +8,24 @@ export default function Actions() {
     return (
         <View style={styles.containerItems}>
             <ScrollView style={{ flexDirection: "row" }} horizontal={true} showsHorizontalScrollIndicator={false}>
-                <TouchableOpacity style={styles.btn} onPress={() => router.push('/addDupla')}>
-                    <AntDesign name="addusergroup" size={30} color="#ffa500" />
-                    <Text style={styles.btnName}>Adicionar Dupla</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => router.push('/addTorneio')}>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push('addTorneio')}>
                     <Ionicons name="trophy" size={30} color="#FFA500" />
                     <Text style={styles.btnName}>Criar Torneio</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => router.push("/listaDuplas")}>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push('addDupla')}>
+                    <AntDesign name="addusergroup" size={30} color="#ffa500" />
+                    <Text style={styles.btnName}>Adicionar Dupla</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push("listaTorneios")}>
+                    <Ionicons name="filter" size={30} color="#FFA500" />
+                    <Text style={styles.btnName}>Lista de Torneios</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.btn} onPress={() => router.push("listaDuplas")}>
                     <Ionicons name="people" size={30} color="#FFA500" />
                     <Text style={styles.btnName}>Lista de Duplas</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => router.push("listaTorneios")}>
-                    <Ionicons name="list" size={30} color="#FFA500" />
-                    <Text style={styles.btnName}>Lista de Torneios</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.btn} onPress={() => router.push("/montarJogos")}>
-                <MaterialIcons name="sports-tennis" size={35} color="#ffa500" />
+                <TouchableOpacity style={styles.btn} onPress={() => router.push("montarJogos")}>
+                    <MaterialIcons name="sports-tennis" size={35} color="#ffa500" />
                     <Text style={styles.btnName}>Montar Jogos</Text>
                 </TouchableOpacity>
             </ScrollView>

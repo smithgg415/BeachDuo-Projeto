@@ -8,6 +8,7 @@ import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { useAuth } from '../../hooks/Auth';
 import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
+import { router } from 'expo-router';
 
 export default function Home() {
     const { user } = useAuth();
@@ -405,5 +406,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 50,
         elevation: 3,
-    }
+    },
+   
+
 });
