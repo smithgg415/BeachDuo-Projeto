@@ -15,11 +15,12 @@
     "ios": {
       "supportsTablet": true
     },
-    "android": { 
+    "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/icon.png",
         "backgroundColor": "#fff"
-      }
+      },
+      "package": "com.smithgg.reactnativeexpo2024"
     },
     "web": {
       "favicon": "./src/assets/images/icon.png"
@@ -27,6 +28,14 @@
     "plugins": [
       "expo-router",
       "expo-font"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "51981f14-fb8c-4798-9171-24a35d29b9ef"
+      }
+    }
   }
 }

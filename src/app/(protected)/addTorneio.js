@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Alert, Image } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Alert, Image, Modal } from "react-native";
 import { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { z } from "zod";
@@ -29,8 +29,7 @@ export default function AddTorneio() {
         descricao: z.string().optional(),
     });
 
-    const { createTorneio } = useTorneioDatabase();
-
+    const { createTorneio } = useTorneioDatabase()
     const [nome, setNome] = useState("");
     const [local, setLocal] = useState("");
     const [foto, setFoto] = useState("");
@@ -39,7 +38,6 @@ export default function AddTorneio() {
     const [dataTorneio, setDataTorneio] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-
     useEffect(() => {
         requestNotificationPermission();
     }, []);
@@ -65,11 +63,10 @@ export default function AddTorneio() {
         });
 
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri); 
-            setFoto(result.assets[0].uri); 
+            setSelectedImage(result.assets[0].uri);
+            setFoto(result.assets[0].uri);
         }
     };
-
     const handleSubmit = async () => {
         const torneio = {
             nome,
@@ -79,7 +76,6 @@ export default function AddTorneio() {
             foto,
             descricao,
         };
-
         try {
             await torneioSchema.parseAsync(torneio);
             await createTorneio(torneio);
@@ -104,7 +100,7 @@ export default function AddTorneio() {
 
                 <View style={styles.inputContainer}>
                     <TextInput
-                        placeholder="Nome"
+                        placeholder="Insira o nome do torneio"
                         style={styles.inputWithIcon}
                         onChangeText={setNome}
                         value={nome}
@@ -114,6 +110,7 @@ export default function AddTorneio() {
 
                 <TouchableOpacity style={styles.datePicker} onPress={() => setShowDatePicker(true)}>
                     <Text style={styles.dateText}>Data do Torneio: {dataTorneio.toLocaleDateString()}</Text>
+                    <Ionicons name="calendar" size={24} color="#fff" style={styles.iconInsideInputCalendar} />
                 </TouchableOpacity>
 
                 {showDatePicker && (
@@ -128,7 +125,7 @@ export default function AddTorneio() {
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.inputWithIcon}
-                        placeholder="Local"
+                        placeholder="Nome da arena ou quadra..."
                         onChangeText={setLocal}
                         value={local}
                     />
@@ -137,7 +134,7 @@ export default function AddTorneio() {
                 <View style={styles.inputContainer}>
                     <TextInput
                         style={styles.inputWithIcon}
-                        placeholder="Link endereço Google Maps"
+                        placeholder="URL do endereço Google Maps"
                         onChangeText={setLinkLocal}
                         value={linkLocal}
                     />
@@ -153,23 +150,39 @@ export default function AddTorneio() {
 
                 <View style={styles.inputContainer}>
                     <TextInput
-                        style={styles.inputWithIcon}
+                        style={styles.inputWithIconDescription}
                         placeholder="Descreva brevemente o torneio."
                         onChangeText={setDescricao}
-                        value={descricao}
+                        value={descricao} multiline={true}
                     />
-                    <Ionicons name="document-text" size={24} color="#FFA500" style={styles.iconInsideInput} />
+                    <Ionicons name="document-text" size={24} color="#FFA500" style={styles.iconInsideInputDescription} />
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Criar Torneio</Text>
+                    <Text style={styles.buttonText}>
+                        Criar Torneio</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>
+
     );
 }
 
 const styles = StyleSheet.create({
+    modalBackground: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContainer: {
+        width: 350,
+        height: "100",
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
     container: {
         flex: 1,
         backgroundColor: '#ffa',
@@ -202,6 +215,25 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 3,
     },
+
+    inputWithIconDescription: {
+        paddingTop: 15,
+        fontFamily: 'regular',
+        textAlignVertical: 'top',
+        height: 120,
+        flex: 1,
+        borderColor: '#ffa500',
+        borderWidth: 2,
+        borderRadius: 8,
+        paddingHorizontal: 15,
+        paddingRight: 40,
+        fontSize: 16,
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+    },
     inputContainer: {
         width: '100%',
         flexDirection: 'row',
@@ -212,6 +244,16 @@ const styles = StyleSheet.create({
     iconInsideInput: {
         position: 'absolute',
         right: 15,
+    },
+    iconInsideInputDescription: {
+        position: 'absolute',
+        right: 15,
+        top: 15,
+    },
+    iconInsideInputCalendar: {
+        position: 'absolute',
+        right: 15,
+        top: 15,
     },
     datePicker: {
         width: '100%',
@@ -229,7 +271,7 @@ const styles = StyleSheet.create({
     imagePicker: {
         width: '100%',
         padding: 15,
-        backgroundColor: '#ffa500',
+        backgroundColor: '#007b',
         borderRadius: 8,
         marginBottom: 15,
         alignItems: 'center',
@@ -251,15 +293,15 @@ const styles = StyleSheet.create({
     },
     button: {
         width: '100%',
-        backgroundColor: '#ffa500',
+        backgroundColor: '#007b',
         borderRadius: 8,
         paddingVertical: 15,
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 20
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontFamily: 'bold',
+        fontSize: 26,
+        fontFamily: 'bolditalic',
     },
 });
