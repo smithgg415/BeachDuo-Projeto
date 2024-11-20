@@ -75,19 +75,21 @@ function CustomDrawerContent(props) {
       <Modal visible={modalVisible} animationType="fade" transparent={true}>
         <View style={styles.modalBackground}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Escolha uma opção</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+              <Text style={styles.modalTitle}>Escolha uma opção</Text>
+              <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
+                <Ionicons name="close" size={20} color="#000"  />
+              </TouchableOpacity>
+            </View>
             <View style={styles.modalButtonContainer}>
               <TouchableOpacity style={styles.modalButton} onPress={() => handleImagePick('gallery')}>
-                <FontAwesome name="file-photo-o" size={35} color="#000" style={styles.icon} />
+                <Ionicons name="image" size={35} color="#000" style={styles.icon} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={() => handleImagePick('camera')}>
                 <MaterialIcons name="add-a-photo" size={35} color="#000" style={styles.icon} />
               </TouchableOpacity>
               <TouchableOpacity style={styles.modalButton} onPress={handleRemoveImage}>
                 <Ionicons name="trash" size={35} color="#d9534f" style={styles.icon} />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-                <Ionicons name="close" size={35} color="#000" style={styles.icon} />
               </TouchableOpacity>
             </View>
           </View>
@@ -259,6 +261,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: '80%',
+    height: 200,
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
@@ -270,6 +273,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalTitle: {
+    marginRight: 17,
+    marginLeft: 60,
     fontSize: 18,
     fontFamily: 'bolditalic',
     textAlign: 'center',
@@ -285,6 +290,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   icon: {
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
     textAlign: 'center',
     marginBottom: 5,
   },
