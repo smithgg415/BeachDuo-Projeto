@@ -91,14 +91,15 @@ export default function App() {
       >
         <Text style={styles.linkText}>Sobre</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.linkText} onPress={() => router.push("/maintenance")}>
+        <Text style={styles.linkText}>Banco de dados</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => BackHandler.exitApp()}
         style={styles.link}
       >
         <Text style={styles.linkText}>Fechar APP</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.linkText} onPress={()=> router.push("/maintenance")}>
-        <Text style={styles.linkText}>Banco de dados</Text>
       </TouchableOpacity>
     </View>
   );
@@ -171,6 +172,7 @@ const styles = StyleSheet.create({
     fontFamily: "semibold",
   },
   link: {
+    margin: 10,
     marginTop: 10,
   },
   linkText: {

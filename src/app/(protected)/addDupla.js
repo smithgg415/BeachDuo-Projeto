@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Animated, Modal, ScrollView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Animated, Modal, ScrollView, Platform, Image } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import { router } from 'expo-router';
 import TopBar from '../../components/TopBar';
@@ -10,6 +10,7 @@ import { useDuplasDatabase } from "../../database/useDuplasDatabase";
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { requestNotificationPermission, scheduleNotification } from "../../components/Notifications";
 import { useNotificationListener } from "../../components/Notifications";
+import { Fontisto } from '@expo/vector-icons';
 
 export default function AddDupla() {
     useNotificationListener();
@@ -157,15 +158,17 @@ export default function AddDupla() {
                         <Text style={styles.textinhoExplicando}>Adicione e controle duplas utilizando o nome de dois jogadores e selecionando o torneio.</Text>
                     </View>
                     {!showForm && (
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity onPress={showFormContainer} style={styles.showFormButton}>
-                                <Ionicons name="add" size={24} color="#ffffff" />
-                                <Text style={styles.buttonText}>Adicionar dupla</Text>
+                        <View style={styles.circleActions}>
+                            <TouchableOpacity style={styles.circles} onPress={showFormContainer}>
+                                <Ionicons name="add" size={40} color="#fff" />
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => router.push('/listaDuplas')} style={styles.botaoIgualMasDiferente}>
-                                <Ionicons name="list" size={24} color="#ffffff" />
-                                <Text style={styles.buttonText}>Ver lista de duplas</Text>
+                            <TouchableOpacity style={styles.circles} onPress={() => { router.push("/listaDuplas") }}>
+                                <Ionicons name="people" size={40} color="#fff" />
                             </TouchableOpacity>
+                            <TouchableOpacity style={styles.circles} onPress={() => {router.push("/listaTorneios") }}>
+                                <Ionicons name="trophy" size={40} color="#fff" />
+                            </TouchableOpacity>
+
                         </View>
                     )}
                     {showForm && (
@@ -202,7 +205,7 @@ export default function AddDupla() {
                                             selectedValue={selectedTorneio}
                                             onValueChange={handleTorneioChange}
                                             dropdownIconColor={"#333"}
-                                            enabled={torneios.length > 0} 
+                                            enabled={torneios.length > 0}
                                         >
                                             {torneios.map((torneio) => (
                                                 <Picker.Item
@@ -236,18 +239,12 @@ export default function AddDupla() {
                                 <View style={styles.contentButtons}>
                                     <View style={styles.firstRow}>
                                         <TouchableOpacity style={styles.addButton} onPress={() => { handleSubmit(); showDuplaCheck() }}>
-                                            <Text style={styles.buttonText}>Adicionar Dupla </Text>
-                                            <Ionicons name="add" size={24} color="#ffffff" />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.continueButton} onPress={() => { showDuplaCheckContinue(); handleSubmit() }}>
-                                            <Text style={styles.buttonText}>Continuar </Text>
-                                            <Ionicons name="arrow-forward" size={24} color="#ffffff" style={{ marginTop: 8 }} />
+                                            <Text style={styles.buttonText}>Cadastrar Dupla </Text>
                                         </TouchableOpacity>
                                     </View>
                                     <View style={styles.secondRow}>
                                         <TouchableOpacity style={styles.cancelButton} onPress={cancelForm}>
-                                            <Text style={styles.buttonText}>Cancelar </Text>
-                                            <Ionicons name="close" size={24} color="#ffffff" style={{ marginTop: 6 }} />
+                                            <Text style={styles.buttonText}>Cancelar cadastro</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -265,7 +262,7 @@ export default function AddDupla() {
                                     <View style={styles.modalBackground}>
                                         <View style={styles.modalContainer}>
                                             <Text style={styles.alertTitle}>Atenção, BeachLover!</Text>
-                                            <Text style={styles.alertMessage}>As duplas adicionadas vão aparecer na lista de duplas, para conferir, clique no botão dentro da caixa de ações.</Text>
+                                            <Text style={styles.alertMessage}>As duplas adicionadas vão aparecer na lista de duplas, para conferir, relogue e clique no botão dentro da caixa de ações.</Text>
                                             <TouchableOpacity style={styles.alertButton} onPress={hideAlertMessage}>
                                                 <Text style={styles.alertButtonText}>Fechar</Text>
                                             </TouchableOpacity>
@@ -353,6 +350,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     containerTextinhoExplicando: {
+        top: -220,
         backgroundColor: '#ffa500',
         padding: 15,
         borderRadius: 8,
@@ -364,36 +362,36 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#ffffff',
         textAlign: 'center',
-        fontFamily: 'bolditalic',
+        fontFamily: 'bold',
     },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    circleActions: {
+        top: -200,
         width: '100%',
-        maxWidth: 400,
-        marginBottom: 20,
+        backgroundColor: '#fff',
+        margin: 20,
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        padding: 15,
+        alignItems: "center",
+        marginTop: 20,
+        borderRadius: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
-    showFormButton: {
-        flexDirection: 'row',
-        backgroundColor: '#2196f3',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginRight: 10,
-        flex: 1,
-        justifyContent: 'center',
-    },
-    botaoIgualMasDiferente: {
-        flexDirection: 'row',
-        backgroundColor: '#ff9800',
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginLeft: 10,
-        flex: 1,
-        justifyContent: 'center',
+
+    circles: {
+        backgroundColor: "#ffa500",
+        padding: 10,
+        borderRadius: 50,
+        elevation: 3,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
     },
     formContainer: {
         width: 430,
@@ -446,21 +444,10 @@ const styles = StyleSheet.create({
         marginVertical: 8,
     },
     addButton: {
-        backgroundColor: '#4caf50',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
-        borderRadius: 8,
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    continueButton: {
-        display: 'flex',
-        flexDirection: 'row',
+        height: 60,
+        width: "100%",
+        backgroundColor: 'green',
         justifyContent: 'center',
-        width: 170,
-        backgroundColor: '#2196f3',
-        paddingVertical: 12,
-        paddingHorizontal: 24,
         borderRadius: 8,
         marginTop: 20,
         alignItems: 'center',
@@ -468,6 +455,7 @@ const styles = StyleSheet.create({
     cancelButton: {
         display: 'flex',
         flexDirection: 'row',
+        height: 60,
         justifyContent: 'center',
         backgroundColor: '#ff6f61',
         paddingVertical: 12,

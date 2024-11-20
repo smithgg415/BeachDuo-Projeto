@@ -26,7 +26,7 @@ export default function About() {
     });
 
     return (
-        <>
+        <ScrollView>
             <View style={styles.backButtonContainer}>
                 <TouchableOpacity onPress={() => router.back("")} style={{ flexDirection: "row" }}>
                     <Ionicons name="arrow-back" size={24} color="#fff" style={{ left: 10, bottom: 10 }} />
@@ -44,7 +44,7 @@ export default function About() {
                 <TypingText
                     text="Olá, Sou o Smith!"
                     speed={100}
-                    style={styles.description}
+                    style={styles.descriptionName}
                 />
 
                 <TypingText speed={50} text="Minha Formação" style={styles.sectionTitle} />
@@ -53,8 +53,16 @@ export default function About() {
                 <TypingText speed={50} text="Giacomelli Dev's" style={styles.sectionTitle} />
                 <Text style={styles.description}>Fundada em 2024, a Giacomelli Dev's é minha startup de desenvolvimento de websites e aplicativos móveis.</Text>
                 <Image source={logo} style={styles.logoImage} />
-            </ScrollView >
-        </>
+
+                <TypingText speed={50} text="BeachDuo" style={styles.sectionTitle} />
+                <Text style={styles.description}>
+                    O BeachDuo é um aplicativo desenvolvido especialmente para Arenas de Beach Tennis. A finalidade do app é ajudar os organizadores a
+                    terem um controle eficiente sobre as duplas dos torneios, facilitar a montagem dos jogos e otimizar a gestão dos eventos. Ele oferece
+                    uma interface intuitiva para organizar competições, gerenciar os participantes e acompanhar o progresso dos torneios, além de conectar
+                    a comunidade de Beach Tennis de forma prática e centralizada.
+                </Text>
+            </ScrollView>
+        </ScrollView>
     );
 }
 
@@ -109,6 +117,15 @@ const styles = StyleSheet.create({
         borderWidth: 2,
     },
     description: {
+        fontFamily: 'regular',
+        fontSize: 18,
+        color: '#333',
+        textAlign: 'justify',
+        marginBottom: 15,
+        paddingHorizontal: 15,
+        lineHeight: 26,
+    },
+    descriptionName: {
         fontFamily: 'regular',
         fontSize: 18,
         color: '#333',

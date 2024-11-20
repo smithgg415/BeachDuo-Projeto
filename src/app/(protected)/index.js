@@ -227,10 +227,11 @@ export default function Home() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffa',
+        backgroundColor: '#ffa500',
         paddingTop: Constants.statusBarHeight,
     },
     scrollViewContent: {
+        backgroundColor: '#ffa',
         paddingBottom: 20,
     },
     bannerContainer: {
@@ -255,11 +256,12 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         marginTop: 20,
         fontFamily: "bolditalic",
-        backgroundColor: "#007b",
+        backgroundColor: "#00a3a3",
         color: "#fff",
         width: "100%",
         paddingBottom: 5,
-        fontSize: 27,
+        padding: 10,
+        fontSize: 25,
         textAlign: 'center',
     },
     card: {
@@ -320,14 +322,23 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     lojaTitle: {
-        backgroundColor: '#007b',
-        padding: 10,
-        borderRadius: 10,
-        color: '#fff',
-        fontSize: 28,
+        width: '100%',
+        backgroundColor: '#00a3a3',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        color: '#ffffff',
+        fontSize: 30,
         fontFamily: 'bold',
-        marginBottom: 15,
+        textAlign: 'center',
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 3,
     },
+
     lojaCard: {
         justifyContent: "center",
         alignItems: 'center',
@@ -348,6 +359,7 @@ const styles = StyleSheet.create({
         width: '70%',
         height: 100,
         borderRadius: 15,
+        elevation: 3,
     },
     lojaCardInfo: {
         flex: 1,
@@ -373,7 +385,7 @@ const styles = StyleSheet.create({
     },
     buttonAddress: {
         flexDirection: 'row',
-        backgroundColor: '#007b',
+        backgroundColor: '#00a3a3',
         padding: 5,
         borderRadius: 10,
         marginBottom: 10,
@@ -407,6 +419,6 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         elevation: 3,
     },
-   
+
 
 });

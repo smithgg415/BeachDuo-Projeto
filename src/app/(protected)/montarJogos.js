@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     },
     jogosTitle: {
         borderRadius: 12,
-        backgroundColor: '#007b',
+        backgroundColor: '#00a3a3',
         fontSize: 20,
         fontFamily: 'bolditalic',
         color: '#fff',
@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
     },
     shareButton: {
         flexDirection: 'row',
-        backgroundColor: '#007bff',
+        backgroundColor: '#00a3a3',
         paddingVertical: 15,
         borderRadius: 12,
         alignItems: 'center',

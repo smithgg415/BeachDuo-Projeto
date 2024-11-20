@@ -1,9 +1,9 @@
 import { router } from "expo-router";
-import { View, Text, Alert, Button, StyleSheet } from "react-native";
+import { View, Text, Alert, Button, StyleSheet, TouchableOpacity } from "react-native";
 import { useMaintenanceDatabase } from "../database/useMaintenanceDatabase";
 
 export default function MainTenance() {
-    const { resetDatabase, importUsers, importDuplas } = useMaintenanceDatabase();
+    const { resetDatabase, importUsers, importDuplas, importTorneios } = useMaintenanceDatabase();
 
     const handleReset = async () => {
         Alert.alert(
@@ -54,14 +54,26 @@ export default function MainTenance() {
 
     return (
         <View style={styles.container}>
-            <Text>
-                Manutenção do banco de dados
+            <Text style={styles.title}>
+                Manutenção do Banco de Dados
             </Text>
-            <Button title="Zerar" onPress={handleReset} />
-            <Button title="Importar usuários" onPress={handleImportUsers} />
-            <Button title="Importar duplas" onPress={handleImportDuplas} />
-            <Button title="Importar torneios" onPress={handleImportTorneios} />
-            <Button title="Voltar" onPress={() => router.back()} />
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleReset}>
+                    <Text style={styles.buttonText}>Zerar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleImportUsers}>
+                    <Text style={styles.buttonText}>Importar Usuários</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleImportDuplas}>
+                    <Text style={styles.buttonText}>Importar Duplas</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleImportTorneios}>
+                    <Text style={styles.buttonText}>Importar Torneios</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                    <Text style={styles.backButtonText}>Voltar</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 }
@@ -69,7 +81,50 @@ export default function MainTenance() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#f0f0f0',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 20,
     },
+    title: {
+        textAlign: 'center',
+        fontSize: 24,
+        fontFamily: 'bold',
+        color: '#333',
+        marginBottom: 20,
+    },
+    buttonContainer: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: '#ffa500',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 8,
+        marginVertical: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    backButton: {
+        marginTop: 20,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#ffa500',
+        backgroundColor: 'transparent',
+        width: '60%',
+        alignItems: 'center',
+    },
+    backButtonText: {
+        color: '#ffa500',
+        fontSize: 16,
+        fontWeight: 'bold',
+    }
 });

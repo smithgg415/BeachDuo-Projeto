@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 const items = [
-    { id: 1, title: '2° Open de Beach Tennis A. Maui', image:require('../assets/images/logomaui.png'), data: '11/09/2024' },
+    { id: 1, title: '2° Open de Beach Tennis A. Maui', image: require('../assets/images/logomaui.png'), data: '11/09/2024' },
     { id: 2, title: '1° Torneio Paradise', image: require('../assets/images/torneioparadise.png'), data: '25/12/2024' },
     { id: 3, title: '5° Open de Beach Tennis SUN7', image: require('../assets/images/logosun7.png'), data: '25/12/2024' },
     { id: 4, title: '1° Torneio interno Itaguará', image: require('../assets/images/banner.png'), data: '11/03/2024' },
@@ -13,18 +13,18 @@ const items = [
 export default function Pager() {
     const pagerViewRef = useRef(null);
     const [page, setPage] = useState(0);
--
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setPage(prevPage => {
-                const nextPage = prevPage === items.length - 1 ? 0 : prevPage + 1;
-                pagerViewRef.current.setPage(nextPage);
-                return nextPage;
-            });
-        }, 3000);
+    -
+        useEffect(() => {
+            const interval = setInterval(() => {
+                setPage(prevPage => {
+                    const nextPage = prevPage === items.length - 1 ? 0 : prevPage + 1;
+                    pagerViewRef.current.setPage(nextPage);
+                    return nextPage;
+                });
+            }, 3000);
 
-        return () => clearInterval(interval);
-    }, []);
+            return () => clearInterval(interval);
+        }, []);
 
     return (
         <View style={styles.container}>
@@ -34,7 +34,7 @@ export default function Pager() {
                     <View key={item.id} style={styles.item}>
                         <Text style={styles.textoCarrossel}>{item.title}</Text>
                         <Image source={item.image} style={styles.imagem} />
-                        <Text style={styles.textoCarrossel}>Data: {item.data}</Text>
+                        {/* <Text style={styles.textoCarrossel}>Data: {item.data}</Text> */}
                     </View>
                 ))}
             </PagerView>
@@ -77,10 +77,11 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         textAlign: 'center',
         fontFamily: "bolditalic",
-        backgroundColor: "#007b",
+        backgroundColor: "#00a3a3",
         color: "#fff",
         width: "100%",
-        paddingBottom: 5
+        paddingBottom: 5,
+        padding: 10,
     },
     item: {
         justifyContent: 'center',

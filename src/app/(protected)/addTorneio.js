@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     imagePicker: {
         width: '100%',
         padding: 15,
-        backgroundColor: '#007b',
+        backgroundColor: '#00a3a3',
         borderRadius: 8,
         marginBottom: 15,
         alignItems: 'center',
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
     },
     button: {
         width: '100%',
-        backgroundColor: '#007b',
+        backgroundColor: '#00a3a3',
         borderRadius: 8,
         paddingVertical: 15,
         alignItems: 'center',
