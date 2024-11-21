@@ -6,12 +6,16 @@ import { useAuth } from "../../hooks/Auth";
 import Constants from 'expo-constants';
 import avatar from '../../assets/images/giacomelli2.jpg';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
+import { useUsersDatabase } from '../../database/useUsersDatabase';
+import { useImage } from '../../hooks/Context/ImageContext';
 export default function Perfil() {
+    const { imageUri } = useImage();
     const { user, signOut } = useAuth();
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
     const [torneios, setTorneios] = useState([]);
     const [updateList, setUpdateList] = useState(false);
     const statusBarHeight = Constants.statusBarHeight;
+    const { deleteAccount } = useUsersDatabase();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -24,6 +28,19 @@ export default function Perfil() {
 
         fetchData();
     }, [updateList]);
+    const handleDeleteAccount = async () => {
+        try {
+            if (user?.user?.username) {
+                await deleteAccount(user.user.username);
+                signOut(); 
+            } else {
+                Alert.alert("Erro", "Nome de usuário não encontrado.");
+            }
+        } catch (error) {
+            console.error("Erro ao deletar conta: ", error);
+            Alert.alert("Erro", "Não foi possível deletar a conta.");
+        }
+    };
 
     return (
         <ScrollView style={styles.container}>
@@ -38,7 +55,10 @@ export default function Perfil() {
             </View>
 
             <View style={styles.profileSection}>
-                <Image source={avatar} style={styles.profileImage} />
+            <Image
+                source={imageUri ? { uri: imageUri } : require("../../assets/images/placeholder.png")}
+                style={styles.profileImage}
+            />
                 <Text style={styles.userName}>{user?.user?.username || "Realize login para continuar"}</Text>
             </View>
 
@@ -48,6 +68,10 @@ export default function Perfil() {
                     onPress={() => torneios.length > 0 ? router.push("listaTorneios") : Alert.alert("Ops...", "Você ainda não criou nenhum torneio.")}>
                     <Ionicons name="trophy" size={20} color="#fff" />
                     <Text style={styles.actionButtonText}>Torneios criados por você</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.actionButton} onPress={() => handleDeleteAccount()}>
+                    <Ionicons name="trash-outline" size={20} color="#fff" />
+                    <Text style={styles.actionButtonText}>Deletar Conta</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={() => { signOut() }}>
                     <Ionicons name="exit-outline" size={20} color="#fff" />
@@ -92,7 +116,7 @@ const styles = StyleSheet.create({
         height: 160,
         borderRadius: 80,
         borderWidth: 4,
-        borderColor: '#ffa500',
+        borderColor: '#fff',
         marginBottom: 10,
     },
     userName: {

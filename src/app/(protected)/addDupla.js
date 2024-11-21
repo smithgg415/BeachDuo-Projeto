@@ -159,15 +159,24 @@ export default function AddDupla() {
                     </View>
                     {!showForm && (
                         <View style={styles.circleActions}>
-                            <TouchableOpacity style={styles.circles} onPress={showFormContainer}>
-                                <Ionicons name="add" size={40} color="#fff" />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.circles} onPress={() => { router.push("/listaDuplas") }}>
-                                <Ionicons name="people" size={40} color="#fff" />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.circles} onPress={() => {router.push("/listaTorneios") }}>
-                                <Ionicons name="trophy" size={40} color="#fff" />
-                            </TouchableOpacity>
+                            <View>
+                                <TouchableOpacity style={styles.circles} onPress={showFormContainer}>
+                                    <Ionicons name="add" size={40} color="#fff" />
+                                </TouchableOpacity>
+                                <Text style={styles.nameBtn}>Adicionar Dupla</Text>
+                            </View>
+                            <View>
+                                <TouchableOpacity style={styles.circles} onPress={() => { router.push("/listaDuplas") }}>
+                                    <Ionicons name="people" size={40} color="#fff" />
+                                </TouchableOpacity>
+                                <Text style={styles.nameBtn}>Lista de Duplas</Text>
+                            </View>
+                            <View>
+                                <TouchableOpacity style={styles.circles} onPress={() => { router.push("/listaTorneios") }}>
+                                    <Ionicons name="trophy" size={40} color="#fff" />
+                                </TouchableOpacity>
+                                <Text style={styles.nameBtn}>Lista de Torneios</Text>
+                            </View>
 
                         </View>
                     )}
@@ -384,6 +393,8 @@ const styles = StyleSheet.create({
     },
 
     circles: {
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: "#ffa500",
         padding: 10,
         borderRadius: 50,
@@ -556,4 +567,10 @@ const styles = StyleSheet.create({
         color: '#888',
         textAlign: 'center',
     },
+    nameBtn: {
+        textAlign: 'center',
+        fontFamily: 'bold',
+        color: '#ffa500',
+        fontSize: 10
+    }
 });

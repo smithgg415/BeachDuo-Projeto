@@ -20,6 +20,7 @@ const StackLayout = () => {
       <Stack.Screen name="(protected)" options={{ headerShown: false }} />
       <Stack.Screen name="about" options={{ headerShown: false }} />
       <Stack.Screen name="maintenance" options={{ headerShown: false }} />
+      <Stack.Screen name="register" options={{ headerShown: false }} />
     </Stack>
   );
 };

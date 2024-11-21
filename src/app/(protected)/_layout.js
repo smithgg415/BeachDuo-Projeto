@@ -8,47 +8,49 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from "../../hooks/Auth/index";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { ImageProvider } from '../../hooks/Context/ImageContext';
+import { useImage } from '../../hooks/Context/ImageContext';
 
 function CustomDrawerContent(props) {
   const { user, signOut } = useAuth();
-  const [imageUri, setImageUri] = useState(null);
+  const { imageUri, setImageUri } = useImage();
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     setImageUri(null);
   }, [user]);
 
-  const openModal = () => {
-    setModalVisible(true);
-  };
+  const openModal = () => setModalVisible(true);
 
-  const closeModal = () => {
-    setModalVisible(false);
-  };
+  const closeModal = () => setModalVisible(false);
 
   const handleImagePick = async (type) => {
-    let result;
+    try {
+      let result;
 
-    if (type === 'gallery') {
-      result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-    } else if (type === 'camera') {
-      result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
+      if (type === 'gallery') {
+        result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      } else if (type === 'camera') {
+        result = await ImagePicker.launchCameraAsync({
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+      }
+
+      if (!result.canceled) {
+        setImageUri(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Erro ao selecionar imagem:", error);
+    } finally {
+      closeModal();
     }
-
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
-    }
-
-    closeModal();
   };
 
   const handleRemoveImage = () => {
@@ -59,7 +61,6 @@ function CustomDrawerContent(props) {
   const handleLogOut = async () => {
     await signOut();
   };
-
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={openModal}>
@@ -78,7 +79,7 @@ function CustomDrawerContent(props) {
             <View style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
               <Text style={styles.modalTitle}>Escolha uma opção</Text>
               <TouchableOpacity style={styles.modalButton} onPress={closeModal}>
-                <Ionicons name="close" size={20} color="#000"  />
+                <Ionicons name="close" size={20} color="#000" />
               </TouchableOpacity>
             </View>
             <View style={styles.modalButtonContainer}>
@@ -113,87 +114,89 @@ function CustomDrawerContent(props) {
 
 const DrawerLayout = () => {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen
-          name="index"
-          options={{
-            drawerLabel: "Início",
-            drawerIcon: () => <Ionicons name="home" size={35} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-        <Drawer.Screen
-          name="addTorneio"
-          options={{
-            drawerLabel: "Criar Torneio",
-            drawerIcon: () => <Ionicons name="trophy" size={35} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-        <Drawer.Screen
-          name="addDupla"
-          options={{
-            drawerLabel: "Adicionar Duplas",
-            drawerIcon: () => <AntDesign name="addusergroup" size={30} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-        <Drawer.Screen
-          name="listaDuplas"
-          options={{
-            drawerLabel: "Duplas",
-            drawerIcon: () => <Ionicons name="people" size={35} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-        <Drawer.Screen
-          name="listaTorneios"
-          options={{
-            drawerLabel: "Torneios",
-            drawerIcon: () => <Ionicons name="list" size={35} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-        <Drawer.Screen
-          name="montarJogos"
-          options={{
-            drawerLabel: "Montar Jogos",
-            drawerIcon: () => <MaterialIcons name="sports-tennis" size={35} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-        <Drawer.Screen
-          name="perfil"
-          options={{
-            drawerLabel: "Perfil",
-            drawerIcon: () => <Ionicons name="person" size={35} color="#000" />,
-            headerShown: false,
-            drawerActiveBackgroundColor: "#ffa500",
-            drawerActiveTintColor: "#fff",
-            drawerLabelStyle: { fontFamily: "bold" },
-          }}
-        />
-      </Drawer>
-    </GestureHandlerRootView>
+    <ImageProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <Drawer drawerContent={(props) => <CustomDrawerContent {...props} />}>
+          <Drawer.Screen
+            name="index"
+            options={{
+              drawerLabel: "Início",
+              drawerIcon: () => <Ionicons name="home" size={35} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+          <Drawer.Screen
+            name="addTorneio"
+            options={{
+              drawerLabel: "Criar Torneio",
+              drawerIcon: () => <Ionicons name="trophy" size={35} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+          <Drawer.Screen
+            name="addDupla"
+            options={{
+              drawerLabel: "Adicionar Duplas",
+              drawerIcon: () => <AntDesign name="addusergroup" size={30} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+          <Drawer.Screen
+            name="listaDuplas"
+            options={{
+              drawerLabel: "Duplas",
+              drawerIcon: () => <Ionicons name="people" size={35} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+          <Drawer.Screen
+            name="listaTorneios"
+            options={{
+              drawerLabel: "Torneios",
+              drawerIcon: () => <Ionicons name="list" size={35} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+          <Drawer.Screen
+            name="montarJogos"
+            options={{
+              drawerLabel: "Montar Jogos",
+              drawerIcon: () => <MaterialIcons name="sports-tennis" size={35} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+          <Drawer.Screen
+            name="perfil"
+            options={{
+              drawerLabel: "Perfil",
+              drawerIcon: () => <Ionicons name="person" size={35} color="#000" />,
+              headerShown: false,
+              drawerActiveBackgroundColor: "#ffa500",
+              drawerActiveTintColor: "#fff",
+              drawerLabelStyle: { fontFamily: "bold" },
+            }}
+          />
+        </Drawer>
+      </GestureHandlerRootView>
+    </ImageProvider>
   );
 };
 

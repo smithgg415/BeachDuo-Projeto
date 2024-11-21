@@ -12,27 +12,37 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
-import { useAuth } from "../hooks/Auth";
+import { useUsersDatabase } from "../database/useUsersDatabase"; 
 import { router } from "expo-router";
 import logo from "../assets/images/logobeach.png";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-export default function App() {
-  const { signIn } = useAuth();
+export default function Register() {
+  const { createUser } = useUsersDatabase();
   const [username, setUsername] = useState("");
   const [senha, setSenha] = useState("");
+  const [confirmSenha, setConfirmSenha] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(true);
 
   const togglePasswordVisibility = () => {
     setPasswordVisibility(!passwordVisibility);
   };
 
-  const handleLogin = async () => {
+  const handleRegister = async () => {
+    if (senha !== confirmSenha) {
+      Alert.alert("Erro", "As senhas não coincidem.");
+      return;
+    }
+
     try {
-      await signIn({ username, senha });
+      const result = await createUser({ username, senha });
+      if (result && result.insertedID) {
+        Alert.alert("Sucesso", "Conta criada com sucesso! Faça login");
+        router.push("signin");
+      }
     } catch (error) {
-      Alert.alert("Erro", error.message);
-      console.log(error);
+      Alert.alert("Erro", "Não foi possível registrar o usuário.");
+      console.log("Erro na criação do usuário:", error);
     }
   };
 
@@ -44,7 +54,7 @@ export default function App() {
         style={{ width: 350, height: 350, marginBottom: -50 }}
       />
       <Text style={styles.title}>BeachDuo</Text>
-      <Text style={styles.subtitle}>Faça login para continuar</Text>
+      <Text style={styles.subtitle}>Registre-se para começar</Text>
       <View style={styles.inputContainer}>
         <Feather name="user" size={24} color="#ffa500" />
         <TextInput
@@ -76,28 +86,44 @@ export default function App() {
           onPress={togglePasswordVisibility}
         />
       </View>
-      <TouchableOpacity onPress={handleLogin} style={styles.button}>
-        <Text style={styles.buttonText}>Entrar</Text>
+      <View style={styles.inputContainer}>
+        <Ionicons
+          name={
+            passwordVisibility ? "lock-closed-outline" : "lock-open-outline"
+          }
+          size={24}
+          color="#ffa500"
+        />
+        <TextInput
+          placeholder="Confirme a Senha"
+          onChangeText={setConfirmSenha}
+          value={confirmSenha}
+          style={styles.input}
+          secureTextEntry={passwordVisibility}
+        />
+        <Ionicons
+          name={passwordVisibility ? "eye" : "eye-off-outline"}
+          size={24}
+          color="#ffa500"
+          onPress={togglePasswordVisibility}
+        />
+      </View>
+      <TouchableOpacity onPress={handleRegister} style={styles.button}>
+        <Text style={styles.buttonText}>Registrar</Text>
         <MaterialCommunityIcons
-          name="login-variant"
+          name="account-plus"
           size={24}
           color="#fff"
-          style={styles.iconLogin}
+          style={styles.iconRegister}
         />
       </TouchableOpacity>
-
-      {/* <TouchableOpacity style={styles.linkText} onPress={() => router.push("/maintenance")}>
-        <Text style={styles.linkText}>Banco de dados</Text>
-      </TouchableOpacity> */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/register")}>
-        <Text style={styles.buttonText}>Crie uma conta</Text>
-      </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => router.push("/about")}
+        onPress={() => router.push("signin")}
         style={styles.link}
       >
-        <Text style={styles.linkText}>Sobre</Text>
+        <Text style={styles.linkText}>Já tem uma conta? Faça login</Text>
       </TouchableOpacity>
+
       <TouchableOpacity
         onPress={() => BackHandler.exitApp()}
         style={styles.link}
@@ -184,7 +210,7 @@ const styles = StyleSheet.create({
     color: "#ffa500",
     textDecorationLine: "underline",
   },
-  iconLogin: {
+  iconRegister: {
     marginLeft: 10,
     marginTop: 10,
   },

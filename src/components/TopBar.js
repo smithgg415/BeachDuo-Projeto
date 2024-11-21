@@ -10,7 +10,7 @@ export default function TopBar() {
     const navigation = useNavigation();
     const router = useRouter();
     const [icone, setIcone] = useState("menu");
-    
+
     const isDrawerOpen = useDrawerStatus() === 'open';
 
     useEffect(() => {

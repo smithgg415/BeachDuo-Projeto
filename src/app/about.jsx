@@ -48,7 +48,7 @@ export default function About() {
                 />
 
                 <TypingText speed={50} text="Minha Formação" style={styles.sectionTitle} />
-                <Text style={styles.description}> Atualmente, estudo Desenvolvimento Web e Ethical Hacking.</Text>
+                <Text style={styles.descriptionName}> Atualmente, estudo Desenvolvimento Web e Ethical Hacking.</Text>
 
                 <TypingText speed={50} text="Giacomelli Dev's" style={styles.sectionTitle} />
                 <Text style={styles.description}>Fundada em 2024, a Giacomelli Dev's é minha startup de desenvolvimento de websites e aplicativos móveis.</Text>

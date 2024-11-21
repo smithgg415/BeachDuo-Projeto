@@ -155,8 +155,8 @@ export default function Home() {
                         </View>
                     )}
                 </View>
+                <Text style={styles.lojaTitle}>Loja BeachDuo</Text>
                 <View style={styles.lojaContainer}>
-                    <Text style={styles.lojaTitle}>Loja BeachDuo</Text>
                     <View style={styles.row}>
                         <View style={styles.lojaCard}>
                             <Image source={{ uri: produtos[0].foto }} style={styles.lojaCardImage} />
@@ -322,18 +322,18 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     lojaTitle: {
+        marginTop: 20,
         width: '100%',
         backgroundColor: '#00a3a3',
         paddingVertical: 15,
         paddingHorizontal: 20,
-        borderRadius: 12,
         color: '#ffffff',
         fontSize: 30,
         fontFamily: 'bold',
         textAlign: 'center',
         marginBottom: 20,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 5,
         elevation: 3,
