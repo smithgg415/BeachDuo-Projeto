@@ -76,6 +76,14 @@ export default function AddTorneio() {
             foto,
             descricao,
         };
+            setNome("");
+            setLocal("");
+            setFoto("");
+            setDescricao("");
+            setLinkLocal("");
+            setDataTorneio(new Date());
+            setSelectedImage(null);
+
         try {
             await torneioSchema.parseAsync(torneio);
             await createTorneio(torneio);

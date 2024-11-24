@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Animated, Modal, ScrollView, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Animated, Modal, ScrollView, Platform, Image, RefreshControl } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import { router } from 'expo-router';
 import TopBar from '../../components/TopBar';
@@ -10,7 +10,6 @@ import { useDuplasDatabase } from "../../database/useDuplasDatabase";
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { requestNotificationPermission, scheduleNotification } from "../../components/Notifications";
 import { useNotificationListener } from "../../components/Notifications";
-import { Fontisto } from '@expo/vector-icons';
 
 export default function AddDupla() {
     useNotificationListener();
@@ -23,6 +22,7 @@ export default function AddDupla() {
     const [duplaVisibleContinue, setDuplaVisibleContinue] = useState(false);
     const [campoVazio, setCampoVazio] = useState(false);
     const [confirmationVisible, setConfirmationVisible] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const duplaSchema = z.object({
         id: z.number(),
         jogadorOne: z.string().min(3),
@@ -53,9 +53,23 @@ export default function AddDupla() {
             console.error(error);
         }
     };
+    const fetchData = async () => {
+        try {
+            const allTorneios = await getAllTorneios();
+            setTorneios(allTorneios);
+        } catch (error) {
+            console.error("Erro ao buscar dados: ", error);
+        }
+    };
     useEffect(() => {
+        fetchData();
         requestNotificationPermission();
     }, []);
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    };
     const showDuplaCheck = () => {
         if (!nome01 || !nome02) {
             setCampoVazio(true);
@@ -150,7 +164,7 @@ export default function AddDupla() {
         console.log("Torneio selecionado:", itemValue);
     };
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"} >
             <View style={styles.cont}>
                 <TopBar />
                 <View style={styles.container}>
@@ -181,157 +195,164 @@ export default function AddDupla() {
                         </View>
                     )}
                     {showForm && (
-                        <Animated.View style={[styles.formContainer, { transform: [{ translateY: formTranslateY }] }]}>
+                        <Animated.View style={[styles.formContainer, { transform: [{ translateY: formTranslateY }] }]}
+                        >
                             <TouchableOpacity onPress={hideFormContainer} style={styles.closeButton}>
                                 <Ionicons name="close" size={24} color="#ffffff" />
                             </TouchableOpacity>
-                            <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }} showsVerticalScrollIndicator={false}>
-                                <View style={styles.input}>
-                                    <TextInput
-                                        onChangeText={setNome01}
-                                        placeholder='Digite o primeiro jogador'
-                                        value={nome01}
-                                    />
-                                    <Ionicons name="person" size={24} color="#333" />
+                            <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center", alignItems: "center" }} showsVerticalScrollIndicator={false} refreshControl={
+                                <RefreshControl
+                                    refreshing={refreshing}
+                                    onRefresh={onRefresh} // Função para atualizar os dados
+                                />
+                            }>
+                            <View style={styles.input}>
+                                <TextInput
+                                    onChangeText={setNome01}
+                                    placeholder='Digite o primeiro jogador'
+                                    value={nome01}
+                                />
+                                <Ionicons name="person" size={24} color="#333" />
+                            </View>
+                            <View style={styles.input}>
+                                <TextInput
+                                    onChangeText={setNome02}
+                                    placeholder='Digite o segundo jogador'
+                                    value={nome02}
+                                />
+                                <Ionicons name="person" size={24} color="#333" />
+                            </View>
+                            <View>
+                                <Text style={{ fontFamily: "regular", fontSize: 20 }}>Selecione o Torneio</Text>
+                            </View>
+                            <View style={styles.input}>
+                                {torneios.length === 0 ? (
+                                    <Text style={styles.noTorneioText}>Nenhum torneio cadastrado ainda...</Text>
+                                ) : (
+                                    <Picker
+                                        style={{ width: '100%' }}
+                                        selectedValue={selectedTorneio}
+                                        onValueChange={handleTorneioChange}
+                                        dropdownIconColor={"#333"}
+                                        enabled={torneios.length > 0}
+                                    >
+                                        {torneios.map((torneio) => (
+                                            <Picker.Item
+                                                key={torneio.id}
+                                                label={torneio.nome}
+                                                value={torneio.id}
+                                            />
+                                        ))}
+                                    </Picker>
+                                )}
+                            </View>
+                            <Text style={styles.updated}>Puxe para baixo para atualizar a lista de Torneios</Text>
+                            <View style={styles.duplaContainer}>
+                                <Text style={styles.conferir}>Confira os nomes</Text>
+                                <Text style={styles.name}>{nome01 ? nome01 : "Jogador 01"}</Text>
+                                <Text style={styles.and}>&</Text>
+                                <Text style={styles.name}>{nome02 ? nome02 : "Jogador 02"}</Text>
+                            </View>
+                            <View style={styles.duplaContainer}>
+                                <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                                    <Text style={styles.conferir}>Confira o Torneio</Text>
+                                    <Ionicons name="trophy" size={24} color="#333" style={{ marginTop: 12, marginLeft: 10 }} />
                                 </View>
-                                <View style={styles.input}>
-                                    <TextInput
-                                        onChangeText={setNome02}
-                                        placeholder='Digite o segundo jogador'
-                                        value={nome02}
-                                    />
-                                    <Ionicons name="person" size={24} color="#333" />
-                                </View>
-                                <View>
-                                    <Text style={{ fontFamily: "regular", fontSize: 20 }}>Selecione o Torneio</Text>
-                                </View>
-                                <View style={styles.input}>
-                                    {torneios.length === 0 ? (
-                                        <Text style={styles.noTorneioText}>Nenhum torneio cadastrado ainda...</Text>
-                                    ) : (
-                                        <Picker
-                                            style={{ width: '100%' }}
-                                            selectedValue={selectedTorneio}
-                                            onValueChange={handleTorneioChange}
-                                            dropdownIconColor={"#333"}
-                                            enabled={torneios.length > 0}
-                                        >
-                                            {torneios.map((torneio) => (
-                                                <Picker.Item
-                                                    key={torneio.id}
-                                                    label={torneio.nome}
-                                                    value={torneio.id}
-                                                />
-                                            ))}
-                                        </Picker>
-                                    )}
-                                </View>
-                                <View style={styles.duplaContainer}>
-                                    <Text style={styles.conferir}>Confira os nomes</Text>
-                                    <Text style={styles.name}>{nome01 ? nome01 : "Jogador 01"}</Text>
-                                    <Text style={styles.and}>&</Text>
-                                    <Text style={styles.name}>{nome02 ? nome02 : "Jogador 02"}</Text>
-                                </View>
-                                <View style={styles.duplaContainer}>
-                                    <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
-                                        <Text style={styles.conferir}>Confira o Torneio</Text>
-                                        <Ionicons name="trophy" size={24} color="#333" style={{ marginTop: 12, marginLeft: 10 }} />
-                                    </View>
-                                    <Text style={styles.name}>
-                                        {selectedTorneio === null
-                                            ? "Nenhum torneio selecionado"
-                                            : torneios.find((item) => item.id === selectedTorneio)?.nome}
-                                    </Text>
+                                <Text style={styles.name}>
+                                    {selectedTorneio === null
+                                        ? "Nenhum torneio selecionado"
+                                        : torneios.find((item) => item.id === selectedTorneio)?.nome}
+                                </Text>
 
 
+                            </View>
+                            <View style={styles.contentButtons}>
+                                <View style={styles.firstRow}>
+                                    <TouchableOpacity style={styles.addButton} onPress={() => { handleSubmit(); showDuplaCheck() }}>
+                                        <Text style={styles.buttonText}>Cadastrar Dupla </Text>
+                                    </TouchableOpacity>
                                 </View>
-                                <View style={styles.contentButtons}>
-                                    <View style={styles.firstRow}>
-                                        <TouchableOpacity style={styles.addButton} onPress={() => { handleSubmit(); showDuplaCheck() }}>
-                                            <Text style={styles.buttonText}>Cadastrar Dupla </Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={styles.secondRow}>
-                                        <TouchableOpacity style={styles.cancelButton} onPress={cancelForm}>
-                                            <Text style={styles.buttonText}>Cancelar cadastro</Text>
-                                        </TouchableOpacity>
-                                    </View>
+                                <View style={styles.secondRow}>
+                                    <TouchableOpacity style={styles.cancelButton} onPress={cancelForm}>
+                                        <Text style={styles.buttonText}>Cancelar cadastro</Text>
+                                    </TouchableOpacity>
                                 </View>
-                                {/* <View style={styles.containerInfo}>
+                            </View>
+                            {/* <View style={styles.containerInfo}>
                             <Text style={styles.info}>
                                 As duplas adicionadas vão aparecer na lista de duplas, para conferir, clique no botão dentro da caixa de ações
                             </Text>
                         </View> */}
-                                <Modal
-                                    animationType="fade"
-                                    transparent={true}
-                                    visible={modalVisible}
-                                    onRequestClose={hideAlert}
-                                >
-                                    <View style={styles.modalBackground}>
-                                        <View style={styles.modalContainer}>
-                                            <Text style={styles.alertTitle}>Atenção, BeachLover!</Text>
-                                            <Text style={styles.alertMessage}>As duplas adicionadas vão aparecer na lista de duplas, para conferir, relogue e clique no botão dentro da caixa de ações.</Text>
-                                            <TouchableOpacity style={styles.alertButton} onPress={hideAlertMessage}>
-                                                <Text style={styles.alertButtonText}>Fechar</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                            <Modal
+                                animationType="fade"
+                                transparent={true}
+                                visible={modalVisible}
+                                onRequestClose={hideAlert}
+                            >
+                                <View style={styles.modalBackground}>
+                                    <View style={styles.modalContainer}>
+                                        <Text style={styles.alertTitle}>Atenção, BeachLover!</Text>
+                                        <Text style={styles.alertMessage}>As duplas adicionadas vão aparecer na lista de duplas, para conferir, relogue e clique no botão dentro da caixa de ações.</Text>
+                                        <TouchableOpacity style={styles.alertButton} onPress={hideAlertMessage}>
+                                            <Text style={styles.alertButtonText}>Fechar</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                </Modal>
-                                <Modal animationType='fade' transparent={true} visible={duplaVisible} onRequestClose={hideDupla}>
-                                    <View style={styles.modalBackground}>
-                                        <View style={styles.modalContainer}>
-                                            <Text style={styles.alertTitle}>Parabéns, dupla adicionada com sucesso!</Text>
-                                            <Text style={styles.alertMessage}>Verifique a lista</Text>
-                                            <Ionicons name="checkmark-circle" size={50} color="#4caf50" style={{ marginBottom: 10 }} />
-                                            <TouchableOpacity style={styles.alertConfirmation} onPress={hideAlert}>
-                                                <Text style={styles.alertButtonText}>Fechar</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                </View>
+                            </Modal>
+                            <Modal animationType='fade' transparent={true} visible={duplaVisible} onRequestClose={hideDupla}>
+                                <View style={styles.modalBackground}>
+                                    <View style={styles.modalContainer}>
+                                        <Text style={styles.alertTitle}>Parabéns, dupla adicionada com sucesso!</Text>
+                                        <Text style={styles.alertMessage}>Verifique a lista</Text>
+                                        <Ionicons name="checkmark-circle" size={50} color="#4caf50" style={{ marginBottom: 10 }} />
+                                        <TouchableOpacity style={styles.alertConfirmation} onPress={hideAlert}>
+                                            <Text style={styles.alertButtonText}>Fechar</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                </Modal>
-                                <Modal animationType='fade' transparent={true} visible={duplaVisibleContinue} onRequestClose={hideDupla}>
-                                    <View style={styles.modalBackground}>
-                                        <View style={styles.modalContainer}>
-                                            <Text style={styles.alertTitle}>Parabéns, dupla adicionada com sucesso! Relogue para atualizar a lista.</Text>
-                                            <Text style={styles.alertMessage}>Continue adicionando</Text>
-                                            <Ionicons name="checkmark-circle" size={50} color="#4caf50" style={{ marginBottom: 10 }} />
-                                            <TouchableOpacity style={styles.alertConfirmation} onPress={hideAlertContinue}>
-                                                <Text style={styles.alertButtonText}>Fechar</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                </View>
+                            </Modal>
+                            <Modal animationType='fade' transparent={true} visible={duplaVisibleContinue} onRequestClose={hideDupla}>
+                                <View style={styles.modalBackground}>
+                                    <View style={styles.modalContainer}>
+                                        <Text style={styles.alertTitle}>Parabéns, dupla adicionada com sucesso! Relogue para atualizar a lista.</Text>
+                                        <Text style={styles.alertMessage}>Continue adicionando</Text>
+                                        <Ionicons name="checkmark-circle" size={50} color="#4caf50" style={{ marginBottom: 10 }} />
+                                        <TouchableOpacity style={styles.alertConfirmation} onPress={hideAlertContinue}>
+                                            <Text style={styles.alertButtonText}>Fechar</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                </Modal>
-                                <Modal animationType='fade' transparent={true} visible={campoVazio} onRequestClose={hideDupla}>
-                                    <View style={styles.modalBackground}>
-                                        <View style={styles.modalContainer}>
-                                            <Text style={styles.alertTitle}>OPA, VAMOS COM CALMA!!</Text>
-                                            <Text style={styles.alertMessage}>Preencha os campos, eles não podem ficar vazios.</Text>
-                                            <TouchableOpacity style={styles.alertCampoVazio} onPress={hideAlertContinue}>
-                                                <Text style={styles.alertButtonText}>Fechar</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                </View>
+                            </Modal>
+                            <Modal animationType='fade' transparent={true} visible={campoVazio} onRequestClose={hideDupla}>
+                                <View style={styles.modalBackground}>
+                                    <View style={styles.modalContainer}>
+                                        <Text style={styles.alertTitle}>OPA, VAMOS COM CALMA!!</Text>
+                                        <Text style={styles.alertMessage}>Preencha os campos, eles não podem ficar vazios.</Text>
+                                        <TouchableOpacity style={styles.alertCampoVazio} onPress={hideAlertContinue}>
+                                            <Text style={styles.alertButtonText}>Fechar</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                </Modal>
-                                <Modal animationType='fade' transparent={true} visible={confirmationVisible} onRequestClose={hideConfirmation}>
-                                    <View style={styles.modalBackground}>
-                                        <View style={styles.modalContainer}>
-                                            <Text style={styles.alertTitle}>Tem certeza disso?</Text>
-                                            <Text style={styles.alertMessage}>Os dados serão apagados!</Text>
-                                            <TouchableOpacity style={{ backgroundColor: '#ff6f61', paddingVertical: 10, paddingHorizontal: 26, borderRadius: 5, marginBottom: 10, }} onPress={close}>
-                                                <Text style={styles.alertButtonText}>Sim, desejo cancelar!</Text>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity style={{ backgroundColor: '#4caf50', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 5, }} onPress={hideConfirmation}>
-                                                <Text style={styles.alertButtonText}>Não, continuarei aqui!</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                </View>
+                            </Modal>
+                            <Modal animationType='fade' transparent={true} visible={confirmationVisible} onRequestClose={hideConfirmation}>
+                                <View style={styles.modalBackground}>
+                                    <View style={styles.modalContainer}>
+                                        <Text style={styles.alertTitle}>Tem certeza disso?</Text>
+                                        <Text style={styles.alertMessage}>Os dados serão apagados!</Text>
+                                        <TouchableOpacity style={{ backgroundColor: '#ff6f61', paddingVertical: 10, paddingHorizontal: 26, borderRadius: 5, marginBottom: 10, }} onPress={close}>
+                                            <Text style={styles.alertButtonText}>Sim, desejo cancelar!</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{ backgroundColor: '#4caf50', paddingVertical: 10, paddingHorizontal: 20, borderRadius: 5, }} onPress={hideConfirmation}>
+                                            <Text style={styles.alertButtonText}>Não, continuarei aqui!</Text>
+                                        </TouchableOpacity>
                                     </View>
-                                </Modal>
-                            </ScrollView>
+                                </View>
+                            </Modal>
+                        </ScrollView>
                         </Animated.View>
                     )}
-                </View>
-            </View >
+            </View>
+        </View >
         </KeyboardAvoidingView >
     );
 }
@@ -572,5 +593,12 @@ const styles = StyleSheet.create({
         fontFamily: 'bold',
         color: '#ffa500',
         fontSize: 10
+    },
+    updated: {
+        textAlign: 'center',
+        fontFamily: 'bold',
+        color: '#333',
+        fontSize: 14,
+        opacity: 0.5,
     }
 });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, RefreshControl, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { router } from "expo-router";
 import Constants from 'expo-constants';
@@ -16,33 +16,39 @@ export default function List() {
     const [duplas, setDuplas] = useState([]);
     const [torneioSelecionado, setTorneioSelecionado] = useState('Todos');
     const [updateList, setUpdateList] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     const comeBack = () => {
         router.back();
         setTorneioSelecionado('Todos');
     };
 
+    const fetchData = async () => {
+        try {
+            const allTorneios = await getAllTorneios();
+            setTorneios(allTorneios);
+
+            const allDuplas = await getAllDuplas();
+            setDuplas(allDuplas);
+        } catch (error) {
+            console.error("Erro ao buscar dados: ", error);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const allTorneios = await getAllTorneios();
-                setTorneios(allTorneios);
-
-                const allDuplas = await getAllDuplas();
-                setDuplas(allDuplas);
-            } catch (error) {
-                console.error("Erro ao buscar dados: ", error);
-            }
-        };
-
         fetchData();
     }, [updateList]);
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    };
 
     const filtrarDuplas = () => {
         return torneioSelecionado === 'Todos'
             ? duplas
             : duplas.filter(dupla => dupla.torneio === torneioSelecionado);
-
     };
 
     const contarDuplas = () => filtrarDuplas().length;
@@ -126,9 +132,21 @@ export default function List() {
                         renderItem={renderItem}
                         contentContainerStyle={styles.listContent}
                         showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                colors={['#ffa500']}
+                            />
+                        }
                     />
                 ) : (
-                    <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
+                    <ScrollView style={styles.itemContainer} refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }>
+                        <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
+                        <Text style={styles.emptyMessage}>Puxe para baixo para atualizar a lista.</Text>
+                    </ScrollView>
                 )}
 
                 <View style={styles.counterContainer}>
@@ -139,7 +157,7 @@ export default function List() {
                         {contarDuplas() > 0 ? (
                             <Text style={styles.contador}>{contarDuplas()}</Text>
                         ) : (
-                                <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
+                            <Text style={styles.emptyMessage}>Nenhuma dupla cadastrada para este torneio.</Text>
                         )}
                     </View>
                 </View>

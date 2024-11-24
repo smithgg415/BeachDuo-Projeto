@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Linking } from 'react-native';
+import { View, Image, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Linking, RefreshControl, ScrollView } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import TopBar from '../../components/TopBar';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
@@ -21,6 +21,7 @@ const formatDateToDDMMYYYY = (dateString) => {
 };
 
 export default function ListTorneios() {
+    const [refreshing, setRefreshing] = useState(false);
     const { user } = useAuth();
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
     const [torneios, setTorneios] = useState([]);
@@ -28,18 +29,24 @@ export default function ListTorneios() {
     const [expandedTorneioId, setExpandedTorneioId] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const allTorneios = await getAllTorneios();
-                setTorneios(allTorneios);
-            } catch (error) {
-                console.error("Erro ao buscar dados: ", error);
-            }
-        };
-
         fetchData();
     }, [updateList]);
 
+    const fetchData = async () => {
+        try {
+            const allTorneios = await getAllTorneios();
+            setTorneios(allTorneios);
+        } catch (error) {
+            console.error("Erro ao buscar dados: ", error);
+        }
+    };
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    };
+    
     const renderItem = ({ item }) => {
         const isExpanded = item.id === expandedTorneioId;
 
@@ -119,6 +126,9 @@ export default function ListTorneios() {
                             renderItem={renderItem}
                             contentContainerStyle={styles.listContent}
                             showsVerticalScrollIndicator={false}
+                            refreshControl={
+                                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                            }
                         />
                     </View>
                     <View style={styles.containerMessage}>
@@ -126,17 +136,21 @@ export default function ListTorneios() {
                     </View>
                 </>
             ) : (
-                <View style={styles.containerEmpty}>
+                <ScrollView style={styles.containerEmpty} refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }>
                     <Text style={styles.message}>Ainda não há nenhum torneio cadastrado.</Text>
+                    <Text style={styles.message}>Se caso você criou e ainda não apareceu, puxe para baixo para atualizar a lista.</Text>
                     <Text style={styles.message}>Crie um novo torneio para iniciar.</Text>
                     <TouchableOpacity style={styles.addButton} onPress={() => router.push('/addTorneio')}>
                         <Text style={styles.detailsText}>Criar Torneio</Text>
                     </TouchableOpacity>
-                </View>
+                </ScrollView>
             )}
         </>
     );
 }
+
 
 const styles = StyleSheet.create({
     top: {
@@ -155,8 +169,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFFFFF',
         padding: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     itemContainer: {
         padding: 20,

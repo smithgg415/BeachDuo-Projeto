@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert, Linking, ActivityIndicator, RefreshControl } from 'react-native';
 import TopBar from '../../components/TopBar';
 import Actions from '../../components/ActionsApp';
 import Pager from '../../components/PagerView';
@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 
 export default function Home() {
     const { user } = useAuth();
+    const [refreshing, setRefreshing] = useState(false);
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
     const [torneios, setTorneios] = useState([]);
     const handleRedirect = (link_compra) => {
@@ -42,6 +43,12 @@ export default function Home() {
     useEffect(() => {
         fetchTorneios();
     }, []);
+
+    const onRefresh = async () => {
+        setRefreshing(true); 
+        await fetchTorneios();
+        setRefreshing(false);
+    };
     const formatDateToDDMMYYYY = (dateString) => {
         const partesData = dateString.split('-');
         if (partesData.length !== 3) {
@@ -111,7 +118,9 @@ export default function Home() {
         <View style={styles.container}>
             <StatusBar style="dark" />
             <TopBar />
-            <ScrollView style={styles.scrollViewContent} showsVerticalScrollIndicator={false}>
+            <ScrollView style={styles.scrollViewContent} showsVerticalScrollIndicator={false}  refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }>
                 <Actions />
                 <View style={styles.bannerContainer}>
                     <Pager />
