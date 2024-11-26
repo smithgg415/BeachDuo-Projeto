@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Share } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, Share, ScrollView, RefreshControl } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Swipeable } from 'react-native-gesture-handler';
-import { router } from 'expo-router';
 import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { useDuplasDatabase } from '../../database/useDuplasDatabase';
 import TopBar from '../../components/TopBar';
@@ -16,23 +15,30 @@ export default function MontarJogos() {
     const [duplas, setDuplas] = useState([]);
     const [torneioSelecionado, setTorneioSelecionado] = useState('Todos');
     const [jogosSorteados, setJogosSorteados] = useState([]);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const fetchData = async () => {
+        try {
+            const allTorneios = await getAllTorneios();
+            setTorneios(allTorneios);
+
+            const allDuplas = await getAllDuplas();
+            setDuplas(allDuplas);
+        } catch (error) {
+            console.error('Erro ao buscar dados: ', error);
+        }
+    };
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const allTorneios = await getAllTorneios();
-                setTorneios(allTorneios);
-
-                const allDuplas = await getAllDuplas();
-                setDuplas(allDuplas);
-            } catch (error) {
-                console.error('Erro ao buscar dados: ', error);
-            }
-        };
-
         fetchData();
     }, []);
-    
+
     const filtrarDuplas = () => {
         return torneioSelecionado === 'Todos'
             ? duplas
@@ -40,6 +46,11 @@ export default function MontarJogos() {
     };
 
     const sortearJogos = () => {
+        if (filtrarDuplas().length === 0) {
+            Alert.alert('Erro', 'Não há nenhuma dupla inscrita neste torneio!');
+            return;
+        }
+
         if (torneioSelecionado === 'Todos') {
             Alert.alert('Erro', 'Selecione um torneio específico para sortear os jogos!');
             return;
@@ -76,6 +87,7 @@ export default function MontarJogos() {
             ]
         );
     };
+
     const compartilharJogos = async () => {
         const textoCompartilhamento = jogosSorteados.map((item, index) => `Jogo ${index + 1}: ${item.jogo}`).join('\n\n');
         try {
@@ -86,80 +98,95 @@ export default function MontarJogos() {
         catch (error) {
             console.error('Erro ao compartilhar jogos: ', error);
         }
-    }
+    };
+
     return (
         <>
             <View style={styles.top}>
                 <TopBar />
             </View>
-            <View style={styles.container}>
-                <View style={styles.topBar}>
-                    <Ionicons name="filter" size={20} color="#fff" />
-                    <Text style={styles.topBarText}>Selecione o Torneio</Text>
-                    <View style={styles.pickerContainer}>
-                        <Ionicons name="trophy" size={24} color="#fff" />
-                        <Picker
-                            selectedValue={torneioSelecionado}
-                            style={styles.picker}
-                            onValueChange={(itemValue) => setTorneioSelecionado(itemValue)}
-                            dropdownIconColor="#fff"
-                        >
-                            <Picker.Item label="Todos" value="Todos" />
-                            {torneios.map(torneio => (
-                                <Picker.Item key={torneio.id} label={torneio.nome} value={torneio.nome} />
-                            ))}
-                        </Picker>
-                    </View>
-                </View>
-
-                {jogosSorteados.length === 0 ? (
-                    <View style={styles.title}>
-                        <Text style={styles.jogosTitle}>Nenhum jogo sorteado ainda!</Text>
-                    </View>
-                ) : (
-                    <View style={styles.title}>
-                        <Text style={styles.jogosTitle}>Jogos Sorteados:</Text>
-                        <View style={styles.jogosContainer}>
-                            <Text style={styles.jogosTitle}>
-                                <Text>Torneio: </Text>
-                                {torneioSelecionado}</Text>
-                            <FlatList
-                                data={jogosSorteados}
-                                keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => (
-                                    <Swipeable
-                                        renderRightActions={() => (
-                                            <TouchableOpacity
-                                                style={styles.deleteButton}
-                                                onPress={() => handleDeleteJogo(item)}
-                                            >
-                                                <Ionicons name="trash" size={24} color="#fff" />
-                                            </TouchableOpacity>
-                                        )}
-                                    >
-                                        <View style={[styles.jogoItem, { marginBottom: 10 }]}>
-                                            <Text style={styles.jogoText}>{item.jogo}</Text>
-                                        </View>
-                                    </Swipeable>
-                                )}
-                            />
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                }
+                contentContainerStyle={styles.scrollViewContent}
+                showsVerticalScrollIndicator={false}
+            >
+                <View style={styles.container}>
+                    <View style={styles.topBar}>
+                        <Ionicons name="filter" size={20} color="#fff" />
+                        <Text style={styles.topBarText}>Selecione o Torneio</Text>
+                        <View style={styles.pickerContainer}>
+                            <Ionicons name="trophy" size={24} color="#fff" />
+                            <Picker
+                                selectedValue={torneioSelecionado}
+                                style={styles.picker}
+                                onValueChange={(itemValue) => setTorneioSelecionado(itemValue)}
+                                dropdownIconColor="#fff"
+                            >
+                                <Picker.Item label="Todos" value="Todos" />
+                                {torneios.map(torneio => (
+                                    <Picker.Item key={torneio.id} label={torneio.nome} value={torneio.nome} />
+                                ))}
+                            </Picker>
                         </View>
                     </View>
-                )}
 
-                <View style={styles.containerButtons}>
-                    <TouchableOpacity style={styles.sortButton} onPress={sortearJogos}>
-                        <Text style={styles.sortButtonText}>Sortear Jogos</Text>
-                    </TouchableOpacity>
-                    {jogosSorteados.length > 0 && (
-                        <TouchableOpacity style={styles.shareButton} onPress={compartilharJogos}>
-                            <Ionicons name="share-social" size={24} color="#fff" />
-                            <Text style={styles.shareButtonText}>Compartilhar</Text>
+                    <Text style={styles.updated}>Puxe para baixo para atualizar a lista</Text>
+
+                    {jogosSorteados.length === 0 ? (
+                        <View style={styles.title}>
+                            <Text style={styles.gamesEmpty}>Nenhum jogo sorteado ainda!</Text>
+                        </View>
+                    ) : (
+                        <View style={styles.title}>
+                            <Text style={styles.jogosTitle}>Jogos Sorteados:</Text>
+                            <View style={styles.jogosContainer}>
+                                <Text style={styles.jogosTitle}>
+                                    <Text>Torneio: </Text>
+                                    {torneioSelecionado}</Text>
+                                <ScrollView>
+                                    <FlatList
+                                        data={jogosSorteados}
+                                        keyExtractor={(item, index) => index.toString()}
+                                        showsVerticalScrollIndicator={false}
+                                        scrollEnabled={false}
+                                        renderItem={({ item }) => (
+                                            <Swipeable
+                                                renderRightActions={() => (
+                                                    <TouchableOpacity
+                                                        style={styles.deleteButton}
+                                                        onPress={() => handleDeleteJogo(item)}
+                                                    >
+                                                        <Ionicons name="trash" size={20} color="#fff" />
+                                                    </TouchableOpacity>
+                                                )}
+                                            >
+                                                <View style={[styles.jogoItem, { marginBottom: 10 }]}>
+                                                    <Text style={styles.jogoText}>{item.jogo}</Text>
+                                                </View>
+                                            </Swipeable>
+                                        )}
+                                        contentContainerStyle={{ flexGrow: 1 }}
+                                    />
+                                </ScrollView>
+                            </View>
+                        </View>
+                    )}
+
+                    <View style={styles.containerButtons}>
+                        <TouchableOpacity style={styles.sortButton} onPress={sortearJogos}>
+                            <Text style={styles.sortButtonText}>Sortear Jogos</Text>
                         </TouchableOpacity>
-                    )
-                    }
+                        {jogosSorteados.length > 0 && (
+                            <TouchableOpacity style={styles.shareButton} onPress={compartilharJogos}>
+                                <Ionicons name="share-social" size={24} color="#fff" />
+                                <Text style={styles.shareButtonText}>Compartilhar</Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
-            </View>
+            </ScrollView>
         </>
     );
 }
@@ -168,6 +195,10 @@ const styles = StyleSheet.create({
     top: {
         paddingTop: Constants.statusBarHeight,
         backgroundColor: '#ffa500',
+    },
+    scrollViewContent: {
+        flexGrow: 1,
+
     },
     container: {
         backgroundColor: '#ffa',
@@ -217,79 +248,31 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
+        marginBottom: 10,
     },
     sortButtonText: {
         fontSize: 18,
         fontFamily: 'bold',
         color: '#fff',
     },
-    jogosContainer: {
-        borderWidth: 1,
-        borderColor: '#ffa500',
-        borderRadius: 12,
-        padding: 20,
-        height: 320,
-        overflow: "scroll",
+    containerButtons: {
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
         marginTop: 20,
-        marginBottom: 30,
     },
-    jogosTitle: {
-        borderRadius: 12,
-        backgroundColor: '#00a3a3',
-        fontSize: 20,
-        fontFamily: 'bolditalic',
-        color: '#fff',
-        padding: 15,
-        textAlign: 'center',
-        marginBottom: 10,
-    },
-    jogoItem: {
-        backgroundColor: '#ffa500',
-        padding: 15,
-        borderRadius: 12,
-        marginVertical: 8,
-        height: 70,
+    shareButton: {
         justifyContent: 'center',
+        backgroundColor: '#00a3a3',
+        flexDirection: 'row',
         alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.1,
         shadowRadius: 6,
-    },
-    jogoText: {
-        fontSize: 16,
-        fontFamily: 'bold',
-        color: '#fff',
-        textAlign: 'center',
-        letterSpacing: 0.5,
-    },
-    deleteButton: {
-        backgroundColor: '#ff6347',
-        height: 50,
-        width: 50,
-        marginTop: 15,
-        marginLeft: 10,
-        elevation: 5,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-
-    backButtonText: {
-        fontSize: 16,
-        fontFamily: 'bold',
-        color: '#fff',
-        marginLeft: 10,
-        letterSpacing: 0.5,
-    },
-    shareButton: {
-        flexDirection: 'row',
-        backgroundColor: '#00a3a3',
-        paddingVertical: 15,
-        borderRadius: 12,
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 15,
     },
     shareButtonText: {
         fontSize: 18,
@@ -297,10 +280,59 @@ const styles = StyleSheet.create({
         color: '#fff',
         marginLeft: 10,
     },
-    containerButtons: {
-        left: 22,
-        width: '100%',
-        position: 'absolute',
-        bottom: 20,
-    }
+    jogosTitle: {
+        textAlign: 'center',
+        fontSize: 20,
+        fontFamily: 'bold',
+        color: '#fff',
+        backgroundColor: '#00a3a3',
+        padding: 10,
+        borderRadius: 12,
+        marginBottom: 15,
+    },
+    jogosContainer: {
+        backgroundColor: '#ffa500',
+        borderRadius: 12,
+        padding: 15,
+    },
+    jogoItem: {
+        backgroundColor: '#ffa',
+        padding: 15,
+        borderRadius: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+    },
+    jogoText: {
+        fontSize: 13,
+        color: '#4d4d4d',
+        textAlign: 'center',
+        fontFamily: 'bolditalic',
+    },
+    deleteButton: {
+        backgroundColor: '#ff3333',
+        padding: 10,
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginVertical: 5,
+        marginLeft: 10,
+    },
+    updated: {
+        fontFamily: 'bold',
+        fontSize: 14,
+        color: '#555',
+        textAlign: 'center',
+        marginBottom: 15,
+    },
+    gamesEmpty: {
+        fontSize: 18,
+        color: '#888',
+        textAlign: 'center',
+        fontFamily: 'bolditalic',
+    },
 });
+

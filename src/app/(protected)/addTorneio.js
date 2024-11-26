@@ -87,7 +87,7 @@ export default function AddTorneio() {
         try {
             await torneioSchema.parseAsync(torneio);
             await createTorneio(torneio);
-            Alert.alert("Sucesso", "Torneio criado! Relogue para atualizar a lista de torneios.");
+            Alert.alert("Sucesso", "Torneio criado! Atualize a tela.");
 
             await scheduleNotification(
                 "Torneio Criado!",
