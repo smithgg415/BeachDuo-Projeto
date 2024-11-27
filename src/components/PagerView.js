@@ -4,9 +4,9 @@ import { StyleSheet, View, Text, Image } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 const items = [
-    { id: 1, title: '2° Open de Beach Tennis A. Maui', image: require('../assets/images/logomaui.png'), data: '11/09/2024' },
+    { id: 1, title: 'Copa CORONA Sand Game', image: require('../assets/images/mauibanner.png'), data: '11/09/2024' },
     { id: 2, title: '1° Torneio Paradise', image: require('../assets/images/torneioparadise.png'), data: '25/12/2024' },
-    { id: 3, title: '5° Open de Beach Tennis SUN7', image: require('../assets/images/logosun7.png'), data: '25/12/2024' },
+    { id: 3, title: 'Open de Beach Tennis SUN7', image: require('../assets/images/sun7banner.png'), data: '25/12/2024' },
     { id: 4, title: '1° Torneio interno Itaguará', image: require('../assets/images/banner.png'), data: '11/03/2024' },
 ];
 
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     imagem: {
         objectFit: 'cover',
         width: 350,
-        height: 350,
+        height: 320,
         marginTop: 20,
         borderRadius: 20,
     },

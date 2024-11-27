@@ -101,12 +101,6 @@ export default function Register() {
           style={styles.input}
           secureTextEntry={passwordVisibility}
         />
-        <Ionicons
-          name={passwordVisibility ? "eye" : "eye-off-outline"}
-          size={24}
-          color="#ffa500"
-          onPress={togglePasswordVisibility}
-        />
       </View>
       <TouchableOpacity onPress={handleRegister} style={styles.button}>
         <Text style={styles.buttonText}>Registrar</Text>
@@ -122,13 +116,6 @@ export default function Register() {
         style={styles.link}
       >
         <Text style={styles.linkText}>Já tem uma conta? Faça login</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        onPress={() => BackHandler.exitApp()}
-        style={styles.link}
-      >
-        <Text style={styles.linkText}>Fechar APP</Text>
       </TouchableOpacity>
     </View>
   );

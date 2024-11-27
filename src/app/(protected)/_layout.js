@@ -105,7 +105,7 @@ function CustomDrawerContent(props) {
         onPress={handleLogOut}
         style={styles.logout}
       >
-        <Text style={styles.logoutText}>LogOut</Text>
+        <Text style={styles.logoutText}>SignOut</Text>
         <Entypo name="log-out" size={24} color="#fff" />
       </TouchableOpacity>
     </View>
