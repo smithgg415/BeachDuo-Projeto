@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "react-native-expo-2024",
+    "name": "BeachDuo",
     "slug": "react-native-expo-2024",
     "scheme": "react-native-expo-2024",
     "version": "1.0.0",
@@ -10,7 +10,7 @@
     "splash": {
       "image": "./src/assets/images/logobeach.png",
       "resizeMode": "contain",
-      "backgroundColor": "#fff"
+      "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true
@@ -18,7 +18,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./src/assets/images/icon.png",
-        "backgroundColor": "#fff"
+        "backgroundColor": "#ffffff"
       },
       "package": "com.smithgg.reactnativeexpo2024"
     },
@@ -36,6 +36,12 @@
       "eas": {
         "projectId": "51981f14-fb8c-4798-9171-24a35d29b9ef"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/51981f14-fb8c-4798-9171-24a35d29b9ef"
     }
   }
 }

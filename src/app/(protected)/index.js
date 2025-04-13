@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, StatusBar, Image, TouchableOpacity, Alert, Linking, ActivityIndicator, RefreshControl } from 'react-native';
 import TopBar from '../../components/TopBar';
 import Actions from '../../components/ActionsApp';
@@ -8,10 +8,8 @@ import { useTorneioDatabase } from '../../database/useTorneioDatabase';
 import { useAuth } from '../../hooks/Auth';
 import { Ionicons } from '@expo/vector-icons';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { router } from 'expo-router';
 
 export default function Home() {
-    const { user } = useAuth();
     const [refreshing, setRefreshing] = useState(false);
     const { getAllTorneios, deleteTorneio } = useTorneioDatabase();
     const [torneios, setTorneios] = useState([]);

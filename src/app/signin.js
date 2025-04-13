@@ -89,11 +89,11 @@ export default function App() {
       {/* <TouchableOpacity style={styles.linkText} onPress={() => router.push("/maintenance")}>
         <Text style={styles.linkText}>Banco de dados</Text>
       </TouchableOpacity> */}
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/register")}>
-        <Text style={styles.buttonText}>Crie uma conta</Text>
+      <TouchableOpacity style={styles.link} onPress={() => router.push("/register")}>
+        <Text style={styles.linkText}>Crie uma conta</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => router.push("/about")}
+        onPress={() => router.push("about")}
         style={styles.link}
       >
         <Text style={styles.linkText}>Sobre</Text>
